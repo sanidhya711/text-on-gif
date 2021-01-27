@@ -61,7 +61,7 @@ async function textOnGif({file_path,textMessage,font_color,font_size,alignmentX,
             }
         }else{
             if(font_path.substr(font_path-4)==".fnt"){
-                font = __dirname+"../../../"+font_path;
+                font = __dirname+"/../../"+font_path;
             }else{
                 throw("fonts can only be loaded from .fnt files (https://ttf2fnt.com/ can be used to convert ttf fonts to fnt fonts)");
             }
@@ -155,7 +155,7 @@ async function textOnGif({file_path,textMessage,font_color,font_size,alignmentX,
         GifUtil.quantizeSorokin(frames);
         if(write_as_file){
             if(!write_path){
-                write_path = __dirname+"/../../../gif-with-custom-text.gif";
+                write_path = __dirname+"/../../gif-with-custom-text.gif";
             }else{
                 if(write_path.substr(write_path.length-4)!=".gif"){
                     write_path= write_path +".gif";
