@@ -93,15 +93,32 @@ async function textOnGif({file_path,textMessage,font_color,font_size,alignmentX,
             alignmentY = Jimp.VERTICAL_ALIGN_BOTTOM;
         }
         if(textFlash){
-           var font1 = await Jimp.loadFont(Jimp.FONT_SANS_32_BLACK);
-           var font2 = await Jimp.loadFont(Jimp.FONT_SANS_32_WHITE);
+            if(font_size){
+                switch(font_size){
+                    case 8: var font1 = await Jimp.loadFont(Jimp.FONT_SANS_8_BLACK);var font2 = await Jimp.loadFont(Jimp.FONT_SANS_8_WHITE);
+                    break;
+                    case 16: var font1 = await Jimp.loadFont(Jimp.FONT_SANS_16_BLACK);var font2 = await Jimp.loadFont(Jimp.FONT_SANS_16_WHITE);
+                    break;
+                    case 32: var font1 = await Jimp.loadFont(Jimp.FONT_SANS_32_BLACK);var font2 = await Jimp.loadFont(Jimp.FONT_SANS_32_WHITE);
+                    break;
+                    case 64: var font1 = await Jimp.loadFont(Jimp.FONT_SANS_64_BLACK);var font2 = await Jimp.loadFont(Jimp.FONT_SANS_64_WHITE);
+                    break;
+                    case 128: var font1 = await Jimp.loadFont(Jimp.FONT_SANS_128_BLACK);var font2 = await Jimp.loadFont(Jimp.FONT_SANS_128_WHITE);
+                    break;
+                    default: console.log("switched to font size 32 because the font size provided in the constructor is not available for both colors"); var font1 = await Jimp.loadFont(Jimp.FONT_SANS_32_BLACK);var font2 = await Jimp.loadFont(Jimp.FONT_SANS_32_WHITE);
+                    break;
+                }
+            }else{
+                var font1 = await Jimp.loadFont(Jimp.FONT_SANS_32_BLACK);
+                var font2 = await Jimp.loadFont(Jimp.FONT_SANS_32_WHITE);
+            }
         }else{
             font = await Jimp.loadFont(font);
         }
         var frames = [];
         var frameNo = 0;
         var gif;
-        await GifUtil.read(__dirname+"/../../../"+file_path).then(inputGif => {
+        await GifUtil.read(__dirname+"/../../"+file_path).then(inputGif => {
             var noOfFrames = inputGif.frames.length-1;
             var incrementX = Math.round((endX-startX)/noOfFrames);
             var incrementY = Math.round((endY-startY)/noOfFrames);

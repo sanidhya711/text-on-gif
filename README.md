@@ -32,8 +32,19 @@ writing on gif might take some time(generally 3-4 seconds) so always use await w
 #
 &nbsp;
 &nbsp;
-## writeOn_effect
+## writeOnEffect
 ![GitHub Logo](https://i.imgur.com/HOd5Xk1.gif)
+#
+&nbsp;
+&nbsp;
+## flash
+![GitHub Logo](https://i.imgur.com/QUtnvBm.gif)
+#
+&nbsp;
+&nbsp;
+## invertColors
+![GitHub Logo](https://i.imgur.com/pggHaLb.gif)
+#
 &nbsp;
 &nbsp;
 ## All properties
@@ -47,6 +58,9 @@ alignmentX    | String  | No         | "middle"
 alignmentY    | String  | No         | "bottom"
 write_as_file | Boolean | No         | false
 writeOnEffect | Boolean | No         | false
+invertColors  | Boolean | No         | false
+flash         | Boolean | No         | false
+textFlash     | Boolean | No         | false
 write_path    | String  | No         | "/gif-with-custom-text.gif"
 getAsBuffer   | Boolean | No         | true
 font_path     | String  | No         | null
