@@ -3,7 +3,7 @@
 const Jimp = require("jimp");
 const { GifUtil,GifFrame,BitmapImage,GifCodec} = require('gifwrap');
 
-async function textOnGif({file_path,textMessage,font_color,font_size,alignmentX,alignmentY,write_as_file,write_path,getAsBuffer,font_path,animate,startX,endX,startY,endY,positionX,positionY,writeOnEffect}){  
+async function textOnGif({file_path,textMessage,font_color,font_size,alignmentX,alignmentY,write_as_file,write_path,getAsBuffer,font_path,animate,startX,endX,startY,endY,positionX,positionY,writeOnEffect,invertColors,flash,textFlash}){  
     if(getAsBuffer==null || getAsBuffer==true || write_as_file==true){
         if(textMessage==null){
             textMessage="";
@@ -11,7 +11,7 @@ async function textOnGif({file_path,textMessage,font_color,font_size,alignmentX,
         var font;
         if(font_path==null){
             if(font_color==null && font_size == null){
-                font = Jimp.FONT_SANS_32_WHITE
+                font = Jimp.FONT_SANS_32_WHITE;
             }else{
                 if(font_size){
                     if(font_color=="white" || font_color==null){
@@ -92,69 +92,88 @@ async function textOnGif({file_path,textMessage,font_color,font_size,alignmentX,
         }else{
             alignmentY = Jimp.VERTICAL_ALIGN_BOTTOM;
         }
-    
+        if(textFlash){
+           var font1 = await Jimp.loadFont(Jimp.FONT_SANS_32_BLACK);
+           var font2 = await Jimp.loadFont(Jimp.FONT_SANS_32_WHITE);
+        }else{
+            font = await Jimp.loadFont(font);
+        }
         var frames = [];
+        var frameNo = 0;
         var gif;
-        await Jimp.loadFont(font).then(async function(font){
-            await GifUtil.read(__dirname+"../../../"+file_path).then(inputGif => {
-                var noOfFrames = inputGif.frames.length-1;
-                var incrementX = Math.round((endX-startX)/noOfFrames);
-                var incrementY = Math.round((endY-startY)/noOfFrames);
-                startX = startX-incrementX;
-                startY = startY-incrementY;
-                var letterPerFrame = textMessage.length/(noOfFrames-1);
-                if(letterPerFrame<1){
-                    letterPerFrame = 1;
+        await GifUtil.read(__dirname+"/"+file_path).then(inputGif => {
+            var noOfFrames = inputGif.frames.length-1;
+            var incrementX = Math.round((endX-startX)/noOfFrames);
+            var incrementY = Math.round((endY-startY)/noOfFrames);
+            startX = startX-incrementX;
+            startY = startY-incrementY;
+            var letterPerFrame = textMessage.length/(noOfFrames-1);
+            if(letterPerFrame<1){
+                letterPerFrame = 1;
+            }
+            var NoOflettersWritten = letterPerFrame*-1;
+            var originalMessage = textMessage;
+            inputGif.frames.forEach(async function(frame){
+                var jimpCopied = GifUtil.copyAsJimp(Jimp, frame);
+                if(writeOnEffect){
+                    NoOflettersWritten = NoOflettersWritten+letterPerFrame;
+                    textMessage = originalMessage.slice(0,NoOflettersWritten);
                 }
-                var NoOflettersWritten = letterPerFrame*-1;
-                var originalMessage = textMessage;
-                inputGif.frames.forEach(async function(frame){
-                    var jimpCopied = GifUtil.copyAsJimp(Jimp, frame);
-                    if(writeOnEffect){
-                        NoOflettersWritten = NoOflettersWritten+letterPerFrame;
-                        textMessage = originalMessage.slice(0,NoOflettersWritten);
-                    }
-                    if(animate){
-                        startX = startX+incrementX;
-                        startY = startY+incrementY;
-                        jimpCopied.print(font,startX,startY,{text: textMessage},jimpCopied.bitmap.width,jimpCopied.bitmap.height-5);
-                    }
-                    else if(positionX!=null && positionY!=null){
-                        jimpCopied.print(font,positionX,positionY,{text: textMessage},jimpCopied.bitmap.width,jimpCopied.bitmap.height-5);
+                if(invertColors){
+                    jimpCopied.invert();
+                }
+                frameNo++;
+                if(flash && frameNo%2 == 0){
+                    jimpCopied.invert();
+                }
+
+                if(textFlash){
+                    if(frameNo%2 == 0){
+                        font = font2;
                     }else{
-                        jimpCopied.print(font,0,0,{text: textMessage,alignmentX: alignmentX,alignmentY: alignmentY},jimpCopied.bitmap.width,jimpCopied.bitmap.height-5);
-                    }
-                    const GifCopied = new GifFrame(new BitmapImage(jimpCopied.bitmap,{
-                        disposalMethod: frame.disposalMethod,
-                        delayCentisecs: frame.delayCentisecs,
-                    }));
-                    frames.push(GifCopied);   
-                });
-            });
-            GifUtil.quantizeSorokin(frames);
-            if(write_as_file){
-                if(!write_path){
-                    write_path = __dirname+"/../../../gif-with-custom-text.gif";
-                }else{
-                    if(write_path.substr(write_path.length-4)!=".gif"){
-                        write_path= write_path +".gif";
+                        font = font1;
                     }
                 }
-                GifUtil.write(write_path, frames, { loops: 0 }).then(gif => {
-                    console.log("written as file to "+write_path);
-                });
-            }
-    
-            if(getAsBuffer==null || getAsBuffer!=false){
-                const codec = new GifCodec();
-                await codec.encodeGif(frames, { loops: 0 }).then(encodedGIF => {
-                    gif = encodedGIF.buffer;
-                });
-            }else{
-                gif = "set 'getAsBuffer:true' to get gif as buffer";
-            }
-    
+
+                if(animate){
+                    startX = startX+incrementX;
+                    startY = startY+incrementY;
+                    jimpCopied.print(font,startX,startY,{text: textMessage},jimpCopied.bitmap.width,jimpCopied.bitmap.height-5);
+                }
+                else if(positionX!=null && positionY!=null){
+                    jimpCopied.print(font,positionX,positionY,{text: textMessage},jimpCopied.bitmap.width,jimpCopied.bitmap.height-5);
+                }else{
+                    jimpCopied.print(font,0,0,{text: textMessage,alignmentX: alignmentX,alignmentY: alignmentY},jimpCopied.bitmap.width,jimpCopied.bitmap.height-5);
+                }
+                const GifCopied = new GifFrame(new BitmapImage(jimpCopied.bitmap,{
+                    disposalMethod: frame.disposalMethod,
+                    delayCentisecs: frame.delayCentisecs,
+                }));
+                frames.push(GifCopied);   
+            });
         });
+        GifUtil.quantizeSorokin(frames);
+        if(write_as_file){
+            if(!write_path){
+                write_path = __dirname+"/gif-with-custom-text.gif";
+            }else{
+                if(write_path.substr(write_path.length-4)!=".gif"){
+                    write_path= write_path +".gif";
+                }
+            }
+            GifUtil.write(write_path, frames, { loops: 0 }).then(gif => {
+                console.log("written as file to "+write_path);
+            });
+        }
+
+        if(getAsBuffer==null || getAsBuffer!=false){
+            const codec = new GifCodec();
+            await codec.encodeGif(frames, { loops: 0 }).then(encodedGIF => {
+                gif = encodedGIF.buffer;
+            });
+        }else{
+            gif = "set 'getAsBuffer:true' to get gif as buffer";
+        }
         return Promise.resolve(gif);
     }else{
         console.log("function has no output; set 'getAsBuffer:true' to get gif as buffer or set 'write_as_file:true' to save gif as file");
