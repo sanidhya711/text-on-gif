@@ -3,7 +3,7 @@
 const Jimp = require("jimp");
 const { GifUtil,GifFrame,BitmapImage,GifCodec} = require('gifwrap');
 
-async function textOnGif({file_path,textMessage,font_color,font_size,alignmentX,alignmentY,write_as_file,write_path,getAsBuffer,font_path,animate,startX,endX,startY,endY,positionX,positionY}){  
+async function textOnGif({file_path,textMessage,font_color,font_size,alignmentX,alignmentY,write_as_file,write_path,getAsBuffer,font_path,animate,startX,endX,startY,endY,positionX,positionY,writeOnEffect}){  
     if(getAsBuffer==null || getAsBuffer==true || write_as_file==true){
         if(textMessage==null){
             textMessage="";
@@ -102,13 +102,24 @@ async function textOnGif({file_path,textMessage,font_color,font_size,alignmentX,
                 var incrementY = Math.round((endY-startY)/noOfFrames);
                 startX = startX-incrementX;
                 startY = startY-incrementY;
+                var letterPerFrame = textMessage.length/(noOfFrames-1);
+                if(letterPerFrame<1){
+                    letterPerFrame = 1;
+                }
+                var NoOflettersWritten = letterPerFrame*-1;
+                var originalMessage = textMessage;
                 inputGif.frames.forEach(async function(frame){
                     var jimpCopied = GifUtil.copyAsJimp(Jimp, frame);
+                    if(writeOnEffect){
+                        NoOflettersWritten = NoOflettersWritten+letterPerFrame;
+                        textMessage = originalMessage.slice(0,NoOflettersWritten);
+                    }
                     if(animate){
                         startX = startX+incrementX;
                         startY = startY+incrementY;
                         jimpCopied.print(font,startX,startY,{text: textMessage},jimpCopied.bitmap.width,jimpCopied.bitmap.height-5);
-                    }else if(positionX && positionY){
+                    }
+                    else if(positionX!=null && positionY!=null){
                         jimpCopied.print(font,positionX,positionY,{text: textMessage},jimpCopied.bitmap.width,jimpCopied.bitmap.height-5);
                     }else{
                         jimpCopied.print(font,0,0,{text: textMessage,alignmentX: alignmentX,alignmentY: alignmentY},jimpCopied.bitmap.width,jimpCopied.bitmap.height-5);
@@ -123,7 +134,7 @@ async function textOnGif({file_path,textMessage,font_color,font_size,alignmentX,
             GifUtil.quantizeSorokin(frames);
             if(write_as_file){
                 if(!write_path){
-                    write_path = __dirname+"../../../gif-with-custom-text.gif";
+                    write_path = __dirname+"/../../../gif-with-custom-text.gif";
                 }else{
                     if(write_path.substr(write_path.length-4)!=".gif"){
                         write_path= write_path +".gif";
