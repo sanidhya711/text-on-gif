@@ -101,7 +101,7 @@ async function textOnGif({file_path,textMessage,font_color,font_size,alignmentX,
         var frames = [];
         var frameNo = 0;
         var gif;
-        await GifUtil.read(__dirname+"/"+file_path).then(inputGif => {
+        await GifUtil.read(__dirname+"/../../../"+file_path).then(inputGif => {
             var noOfFrames = inputGif.frames.length-1;
             var incrementX = Math.round((endX-startX)/noOfFrames);
             var incrementY = Math.round((endY-startY)/noOfFrames);
@@ -155,7 +155,7 @@ async function textOnGif({file_path,textMessage,font_color,font_size,alignmentX,
         GifUtil.quantizeSorokin(frames);
         if(write_as_file){
             if(!write_path){
-                write_path = __dirname+"/gif-with-custom-text.gif";
+                write_path = __dirname+"/../../../gif-with-custom-text.gif";
             }else{
                 if(write_path.substr(write_path.length-4)!=".gif"){
                     write_path= write_path +".gif";
