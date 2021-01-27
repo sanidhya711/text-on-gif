@@ -1,0 +1,21 @@
+{
+  "name": "text-on-gif",
+  "version": "1.0.7",
+  "description": "a simple package for writing and animating text on animated gifs",
+  "main": "write-on-gif.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "text-on-gif",
+    "write-on-gif",
+    "message-on-gif",
+    "animate-text-gif"
+  ],
+  "author": "sanidhya077",
+  "license": "ISC",
+  "dependencies": {
+    "gifwrap": "^0.9.2",
+    "jimp": "^0.16.1"
+  }
+}
