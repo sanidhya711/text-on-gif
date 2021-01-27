@@ -23,7 +23,10 @@
         });
 
     })();
+## NOTE
+writing on gif might take some time(generally 3-4 seconds) so always use await when getting file as buffer
 
+*the amount of time taken to print the message depends on the number of frames in the gif*
 # Example
 ![GitHub Logo](https://i.imgur.com/1djICGN.gif)
 #
