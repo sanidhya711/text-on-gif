@@ -4,7 +4,7 @@
 
     const textOnGif = require("text-on-gif");
 
-    async function(){
+    (async function(){
 
         //get gif as buffer
         var gifBuffer = await textOnGif({
@@ -22,7 +22,7 @@
             write_path:"path/gif-with-text.gif"
         });
 
-    }();
+    })();
 
 # Example
 ![GitHub Logo](https://i.imgur.com/1djICGN.gif)
@@ -142,3 +142,18 @@ must be passed
 &nbsp;
 &nbsp;
 # positionX
+position of text on the x axis
+
+must be a int
+
+*will support percentage values in later versions*
+#
+&nbsp;
+&nbsp;
+# positionY
+position of text on the y axis
+
+must be a int
+
+*will support percentage values in later versions*
+#

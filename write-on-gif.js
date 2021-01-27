@@ -3,7 +3,7 @@
 const Jimp = require("jimp");
 const { GifUtil,GifFrame,BitmapImage,GifCodec} = require('gifwrap');
 
-async function writeOnGif({file_path,textMessage,font_color,font_size,alignmentX,alignmentY,write_as_file,write_path,getAsBuffer,font_path,animate,startX,endX,startY,endY,positionX,positionY}){  
+async function textOnGif({file_path,textMessage,font_color,font_size,alignmentX,alignmentY,write_as_file,write_path,getAsBuffer,font_path,animate,startX,endX,startY,endY,positionX,positionY}){  
     if(getAsBuffer==null || getAsBuffer==true || write_as_file==true){
         if(textMessage==null){
             textMessage="";
@@ -150,4 +150,4 @@ async function writeOnGif({file_path,textMessage,font_color,font_size,alignmentX
     }
 }
 
-module.exports = writeOnGif;
+module.exports = textOnGif;
