@@ -75,9 +75,8 @@ positionY     | Int     | No         | null
 &nbsp;
 &nbsp;  
 # file_path
-__path to a local gif file.__
+___path to a local gif file.___ or ___URL___
 
-*URLs are not supported right now but will be added in a later version*
 #
 &nbsp;
 &nbsp;
