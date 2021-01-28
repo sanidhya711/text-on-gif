@@ -2,9 +2,24 @@
 
 const Jimp = require("jimp");
 const { GifUtil,GifFrame,BitmapImage,GifCodec} = require('gifwrap');
+const request = require('request').defaults({ encoding: null });
 
-async function textOnGif({file_path,textMessage,font_color,font_size,alignmentX,alignmentY,write_as_file,write_path,getAsBuffer,font_path,animate,startX,endX,startY,endY,positionX,positionY,writeOnEffect,invertColors,flash,textFlash}){  
+async function textOnGif({file_path,textMessage,font_color,font_size,alignmentX,alignmentY,write_as_file,write_path,getAsBuffer,font_path,animate,startX,endX,startY,endY,positionX,positionY,writeOnEffect,invertColors,flash,textFlash,fadeIn,rotate}){  
     if(getAsBuffer==null || getAsBuffer==true || write_as_file==true){
+        if(file_path.includes("http")){
+            request.get(file_path, async function (err, res, body) {
+                file_path = await body;
+                common();
+            });
+        }else{
+            file_path = __dirname+"/../../"+file_path;
+            common();
+        }
+    }else{
+        console.log("function has no output; set 'getAsBuffer:true' to get gif as buffer or set 'write_as_file:true' to save gif as file");
+    }
+
+    async function common(params) {
         if(textMessage==null){
             textMessage="";
         }
@@ -118,10 +133,12 @@ async function textOnGif({file_path,textMessage,font_color,font_size,alignmentX,
         var frames = [];
         var frameNo = 0;
         var gif;
-        await GifUtil.read(__dirname+"/../../"+file_path).then(inputGif => {
+        await GifUtil.read(file_path).then(inputGif => {
             var noOfFrames = inputGif.frames.length-1;
             var incrementX = Math.round((endX-startX)/noOfFrames);
             var incrementY = Math.round((endY-startY)/noOfFrames);
+            var incrementOpacity = 0.1;
+            var opacity = incrementOpacity*-1;
             startX = startX-incrementX;
             startY = startY-incrementY;
             var letterPerFrame = textMessage.length/(noOfFrames-1);
@@ -130,7 +147,7 @@ async function textOnGif({file_path,textMessage,font_color,font_size,alignmentX,
             }
             var NoOflettersWritten = letterPerFrame*-1;
             var originalMessage = textMessage;
-            inputGif.frames.forEach(async function(frame){
+            inputGif.frames.forEach(function(frame){
                 var jimpCopied = GifUtil.copyAsJimp(Jimp, frame);
                 if(writeOnEffect){
                     NoOflettersWritten = NoOflettersWritten+letterPerFrame;
@@ -143,7 +160,7 @@ async function textOnGif({file_path,textMessage,font_color,font_size,alignmentX,
                 if(flash && frameNo%2 == 0){
                     jimpCopied.invert();
                 }
-
+    
                 if(textFlash){
                     if(frameNo%2 == 0){
                         font = font2;
@@ -151,8 +168,27 @@ async function textOnGif({file_path,textMessage,font_color,font_size,alignmentX,
                         font = font1;
                     }
                 }
-
-                if(animate){
+                if(rotate){
+                    const jimpCopied = jimpCopied;
+                    var height = jimpCopied.bitmap.height;
+                    var width = jimpCopied.bitmap.width;
+                    const fontCanvas = new Jimp(height,width);
+                    fontCanvas.print(font,0,0,{text: textMessage},jimpCopied.bitmap.width,jimpCopied.bitmap.height-5).rotate(90);
+                    jimpCopied.blit(fontCanvas,0,0);
+                }
+                else if(fadeIn){
+                    opacity = opacity+incrementOpacity;
+                    if(opacity>1){
+                        opacity = 1;
+                        incrementOpacity=0;
+                    }
+                    const fontCanvas = new Jimp(jimpCopied.bitmap.width,jimpCopied.bitmap.height);
+                    fontCanvas.print(font,0,0,{text: textMessage,alignmentX: alignmentX,alignmentY: alignmentY},jimpCopied.bitmap.width,jimpCopied.bitmap.height-5);
+                    console.log(Math.round(opacity*10)/10);
+                    fontCanvas.opacity(Math.round(opacity*10)/10);
+                    jimpCopied.blit(fontCanvas,0,0);
+                }
+                else if(animate){
                     startX = startX+incrementX;
                     startY = startY+incrementY;
                     jimpCopied.print(font,startX,startY,{text: textMessage},jimpCopied.bitmap.width,jimpCopied.bitmap.height-5);
@@ -182,7 +218,7 @@ async function textOnGif({file_path,textMessage,font_color,font_size,alignmentX,
                 console.log("written as file to "+write_path);
             });
         }
-
+    
         if(getAsBuffer==null || getAsBuffer!=false){
             const codec = new GifCodec();
             await codec.encodeGif(frames, { loops: 0 }).then(encodedGIF => {
@@ -192,8 +228,6 @@ async function textOnGif({file_path,textMessage,font_color,font_size,alignmentX,
             gif = "set 'getAsBuffer:true' to get gif as buffer";
         }
         return Promise.resolve(gif);
-    }else{
-        console.log("function has no output; set 'getAsBuffer:true' to get gif as buffer or set 'write_as_file:true' to save gif as file");
     }
 }
 
