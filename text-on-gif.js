@@ -6,7 +6,7 @@ const request = require('request').defaults({ encoding: null });
 
 async function textOnGif({file_path,textMessage,font_color,font_size,alignmentX,alignmentY,write_as_file,write_path,getAsBuffer,font_path,animate,startX,endX,startY,endY,positionX,positionY,writeOnEffect,invertColors,flash,textFlash,fadeIn,rotate}){  
     if(getAsBuffer==null || getAsBuffer==true || write_as_file==true){
-        if(file_path.includes("http")){
+        if(file_path.substr(0,3)=="http"){
             request.get(file_path, async function (err, res, body) {
                 file_path = await body;
                 common();
