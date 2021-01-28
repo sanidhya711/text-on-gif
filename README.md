@@ -8,14 +8,14 @@
 
         //get gif as buffer
         var gifBuffer = await textOnGif({
-                file_path:"/path/file.gif",
+                file_path:"/path/file.gif", //path to local file or url
                 textMessage:"custom message"
             });
         console.log(gifBuffer)
 
         //write gif as file
         await textOnGif({
-            file_path:"/path/file.gif",
+            file_path:"/path/file.gif", //path to local file or url
             textMessage:"custom message",
             write_as_file:true,
             getAsBuffer:false,
