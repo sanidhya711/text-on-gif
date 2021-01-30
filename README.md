@@ -17,7 +17,7 @@
         await textOnGif({
             file_path:"/path/file.gif", //path to local file or url
             textMessage:"custom message",
-            write_as_file:true,
+            writeAsFile:true,
             getAsBuffer:false,
             write_path:"path/gif-with-text.gif"
         });
@@ -47,17 +47,22 @@ writing on gif might take some time(generally 3-4 seconds) so always use await w
 #
 &nbsp;
 &nbsp;
+![GitHub Logo](https://i.imgur.com/pggHaLb.gif)
+#
+&nbsp;
+&nbsp;
 ## All properties
 Properties    | Type    | Required   | Default
 ------------- | ------  | ---------- | -------
 file_path     | String  | Yes        | null
 textMessage   | String  | Not Really | ""
-font_color    | String  | No         | "white"
-font_size     | Int     | No         | 32
+fontColor    | String  | No         | "white"
+fontSize     | Int     | No         | 32
 alignmentX    | String  | No         | "middle"
 alignmentY    | String  | No         | "bottom"
-write_as_file | Boolean | No         | false
+writeAsFile | Boolean | No         | false
 writeOnEffect | Boolean | No         | false
+fadeIn        | Boolean | No         | false
 invertColors  | Boolean | No         | false
 flash         | Boolean | No         | false
 textFlash     | Boolean | No         | false
@@ -117,19 +122,19 @@ should contain letters and numbers
 #
 &nbsp;
 &nbsp;
-# write_as_file 
+# writeAsFile 
 set as true to write the edited gif to a local folder as a gif file
 
-if no value for **write_path** is passed and **write_as_file** is set to true then it is automatically written ot the root folder of your project with the file name "gif-with-custom-tex.gif"
+if no value for **write_path** is passed and **writeAsFile** is set to true then it is automatically written ot the root folder of your project with the file name "gif-with-custom-tex.gif"
 
 Writing as file overwrites previously written gifs with the same name
 #
 &nbsp;
 &nbsp;
 # write_path
-used when write_as_file is set to true 
+used when writeAsFile is set to true 
 
-if no value is passed for **write_path** and **write_as_file** is set to true then the gif is written to the root folder of your project with the file name *"gif-with-custom-text.gif"*
+if no value is passed for **write_path** and **writeAsFile** is set to true then the gif is written to the root folder of your project with the file name *"gif-with-custom-text.gif"*
 #
 &nbsp;
 &nbsp;
