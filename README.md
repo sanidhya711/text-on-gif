@@ -47,7 +47,8 @@ writing on gif might take some time(generally 3-4 seconds) so always use await w
 #
 &nbsp;
 &nbsp;
-![GitHub Logo](https://i.imgur.com/pggHaLb.gif)
+## fadeIn
+![GitHub Logo](https://i.imgur.com/CDIOdZN.gif)
 #
 &nbsp;
 &nbsp;
@@ -56,11 +57,11 @@ Properties    | Type    | Required   | Default
 ------------- | ------  | ---------- | -------
 file_path     | String  | Yes        | null
 textMessage   | String  | Not Really | ""
-fontColor    | String  | No         | "white"
-fontSize     | Int     | No         | 32
+fontColor     | String  | No         | "white"
+fontSize      | Int     | No         | 32
 alignmentX    | String  | No         | "middle"
 alignmentY    | String  | No         | "bottom"
-writeAsFile | Boolean | No         | false
+writeAsFile   | Boolean | No         | false
 writeOnEffect | Boolean | No         | false
 fadeIn        | Boolean | No         | false
 invertColors  | Boolean | No         | false

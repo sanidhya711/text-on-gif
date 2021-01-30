@@ -188,7 +188,11 @@ async function textOnGif({file_path,textMessage,fontColor,fontSize,alignmentX,al
                     }
                     if(opacity>0){
                         const fontCanvas = new Jimp(jimpCopied.bitmap.width,jimpCopied.bitmap.height);
-                        fontCanvas.print(font,0,0,{text: textMessage,alignmentX: alignmentX,alignmentY: alignmentY},jimpCopied.bitmap.width,jimpCopied.bitmap.height-5);
+                        if(positionX!=null && positionY!=null){
+                            fontCanvas.print(font,positionX,positionY,{text: textMessage},jimpCopied.bitmap.width,jimpCopied.bitmap.height-5);
+                        }else{
+                            fontCanvas.print(font,0,0,{text: textMessage,alignmentX: alignmentX,alignmentY: alignmentY},jimpCopied.bitmap.width,jimpCopied.bitmap.height-5);
+                        }
                         fontCanvas.opacity(Math.round(opacity*10)/10);
                         jimpCopied.blit(fontCanvas,0,0);
                     }
