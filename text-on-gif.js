@@ -9,17 +9,20 @@ async function textOnGif({file_path,textMessage,fontColor,fontSize,alignmentX,al
         if(file_path.substr(0,4)=="http"){
             request.get(file_path, async function (err, res, body) {
                 file_path = await body;
-                common();
+                var returnValue = await common();
+                return Promise.resolve(returnValue);
             });
         }else{
             file_path = __dirname+"/../../"+file_path;
-            common();
+            var returnValue = await common();
+            return Promise.resolve(returnValue);
+
         }
     }else{
         console.log("function has no output; set 'getAsBuffer:true' to get gif as buffer or set 'writeAsFile:true' to save gif as file");
     }
 
-    async function common(params) {
+    async function common(){
         if(textMessage==null){
             textMessage="";
         }
@@ -139,7 +142,6 @@ async function textOnGif({file_path,textMessage,fontColor,fontSize,alignmentX,al
             var incrementY = Math.round((endY-startY)/noOfFrames);
             var incrementOpacity = 0.1;
             if(noOfFrames<10){
-                console.log(1/noOfFrames);
                 incrementOpacity = 1/noOfFrames;
             }
             var opacity = -1*(incrementOpacity*2);
