@@ -1,6 +1,6 @@
 {
   "name": "text-on-gif",
-  "version": "1.0.22",
+  "version": "1.0.23",
   "description": "a simple package for writing and animating text on animated gifs",
   "homepage": "https://github.com/sanidhya711/text-on-gif",
   "main": "text-on-gif.js",
