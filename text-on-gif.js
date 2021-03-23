@@ -177,7 +177,7 @@ async function textOnGif({file_path,textMessage,font_color,font_size,alignmentX,
                 else if(positionX!=null && positionY!=null){
                     jimpCopied.print(font,positionX,positionY,{text: textMessage},jimpCopied.bitmap.width,jimpCopied.bitmap.height-5);
                 }else{
-                    jimpCopied.print(font,0,0,{text: textMessage,alignmentX: alignmentX,alignmentY: alignmentY},jimpCopied.bitmap.width,jimpCopied.bitmap.height-5);
+                   jimpCopied.print(font,0,0,{text: textMessage,alignmentX: alignmentX,alignmentY: alignmentY},jimpCopied.bitmap.width,jimpCopied.bitmap.height-5);
                 }
                 const GifCopied = new GifFrame(new BitmapImage(jimpCopied.bitmap,{
                     disposalMethod: frame.disposalMethod,
@@ -186,7 +186,9 @@ async function textOnGif({file_path,textMessage,font_color,font_size,alignmentX,
                 frames.push(GifCopied);   
             });
         });
+
         GifUtil.quantizeSorokin(frames);
+        
         if(write_as_file){
             if(!write_path){
                 write_path = __dirname+"/../../gif-with-custom-text.gif";
