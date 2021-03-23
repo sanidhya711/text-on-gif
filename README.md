@@ -17,7 +17,7 @@
         await textOnGif({
             file_path:"/path/file.gif", //path to local file or url
             textMessage:"custom message",
-            writeAsFile:true,
+            write_as_file:true,
             getAsBuffer:false,
             write_path:"path/gif-with-text.gif"
         });
