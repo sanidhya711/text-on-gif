@@ -130,7 +130,6 @@ async function textOnGif({file_path,textMessage,font_color,font_size,alignmentX,
 
         if(file_path.substr(0,4)=="http"){
             file_path = await doRequest(file_path);
-            console.log(file_path);
         }else{
             file_path = __dirname+"/../../"+file_path;
         }
@@ -174,10 +173,26 @@ async function textOnGif({file_path,textMessage,font_color,font_size,alignmentX,
                     startY = startY+incrementY;
                     jimpCopied.print(font,startX,startY,{text: textMessage},jimpCopied.bitmap.width,jimpCopied.bitmap.height-5);
                 }
-                else if(positionX!=null && positionY!=null){
-                    jimpCopied.print(font,positionX,positionY,{text: textMessage},jimpCopied.bitmap.width,jimpCopied.bitmap.height-5);
-                }else{
-                   jimpCopied.print(font,0,0,{text: textMessage,alignmentX: alignmentX,alignmentY: alignmentY},jimpCopied.bitmap.width,jimpCopied.bitmap.height-5);
+                else{
+                    if(positionX && !positionY){
+                        if(typeof positionX == "string" && positionX.includes("%")){
+                            positionX = positionX.replace("%","");
+                            positionX = parseInt(positionX);
+                            positionX = (jimpCopied.bitmap.width / 100) * positionX;
+                        }
+                        jimpCopied.print(font,positionX,0,{text: textMessage,alignmentY:alignmentY},jimpCopied.bitmap.width-5,jimpCopied.bitmap.height-5);
+                    }else if(positionY && !positionX){
+                        if(typeof positionY == "string" && positionY.includes("%")){
+                            positionY = positionY.replace("%","");
+                            positionY = parseInt(positionY);
+                            positionY = (jimpCopied.bitmap.height / 100) * positionY;
+                        }
+                        jimpCopied.print(font,0,positionY,{text: textMessage,alignmentX:alignmentX},jimpCopied.bitmap.width-5,jimpCopied.bitmap.height-5);
+                    }else if(positionX && positionY){
+                        jimpCopied.print(font,0,0,{text: textMessage},jimpCopied.bitmap.width,jimpCopied.bitmap.height-5);
+                    }else{
+                        jimpCopied.print(font,0,0,{text: textMessage,alignmentX:alignmentX,alignmentY:alignmentY},jimpCopied.bitmap.width-5,jimpCopied.bitmap.height-5);
+                    }
                 }
                 const GifCopied = new GifFrame(new BitmapImage(jimpCopied.bitmap,{
                     disposalMethod: frame.disposalMethod,
@@ -203,10 +218,14 @@ async function textOnGif({file_path,textMessage,font_color,font_size,alignmentX,
         }
 
         if(getAsBuffer==null || getAsBuffer!=false){
-            const codec = new GifCodec();
-            await codec.encodeGif(frames, { loops: 0 }).then(encodedGIF => {
-                gif = encodedGIF.buffer;
-            });
+            if(write_as_file==true && getAsBuffer != true){
+                gif = "set 'getAsBuffer:true' to get gif as buffer. By defualt getAsBuffer is set to true but when write_as_file is set to true, the file wont be returned as buffer unless setAsBuffer is explicitly set to true"
+            }else{ 
+                const codec = new GifCodec();
+                await codec.encodeGif(frames, { loops: 0 }).then(encodedGIF => {
+                    gif = encodedGIF.buffer;
+                });
+            }
         }else{
             gif = "set 'getAsBuffer:true' to get gif as buffer";
         }

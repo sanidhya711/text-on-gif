@@ -173,7 +173,7 @@ position of text on the x axis
 
 must be a int
 
-*will support percentage values in later versions*
+*now support percentage values*
 #
 &nbsp;
 &nbsp;
@@ -182,5 +182,24 @@ position of text on the y axis
 
 must be a int
 
-*will support percentage values in later versions*
+*now supports percentage values*
 #
+&nbsp;
+&nbsp;
+# startX,endX & startY,endY
+will support percentage values like positionX and positionY soon
+*will be updated soon*
+#
+&nbsp;
+&nbsp;
+# Bugs
+ahha if you use gifs with too many frames then the gifs become something like this.
+
+![Github Logo](https://i.imgur.com/7S0eVoC.gif)
+
+ Although this looks pretty cool its not useful and would normally be called broken so ive decided to fix(atleast try) this and would be updated in the coming versions so this wouldnt happen anymore. Probably
+
+ &nbsp;
+ &nbsp;
+
+ also if you use a gif with too many frames then the library crashes and shows some errors. i'll try to fix that too
