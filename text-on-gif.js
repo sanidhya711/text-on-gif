@@ -201,12 +201,10 @@ async function textOnGif({file_path,textMessage,font_color,font_size,alignmentX,
                     disposalMethod: frame.disposalMethod,
                     delayCentisecs: frame.delayCentisecs,
                 }));
+                GifUtil.quantizeSorokin(GifCopied);
                 frames.push(GifCopied);   
             }
-        });
-
-        GifUtil.quantizeSorokin(frames);
-        
+        });        
         if(write_as_file){
             if(!write_path){
                 write_path = __dirname+"/../../gif-with-custom-text.gif";
