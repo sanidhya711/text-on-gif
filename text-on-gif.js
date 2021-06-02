@@ -146,7 +146,10 @@ async function textOnGif({file_path,textMessage,font_color,font_size,alignmentX,
             }
             var NoOflettersWritten = letterPerFrame*-1;
             var originalMessage = textMessage;
-            inputGif.frames.forEach(async function(frame){
+            var hitLastFrame = 0;
+            while(hitLastFrame < inputGif.frames.length){
+                var frame = inputGif.frames[hitLastFrame];
+                hitLastFrame++;
                 var jimpCopied = GifUtil.copyAsJimp(Jimp, frame);
                 if(writeOnEffect){
                     NoOflettersWritten = NoOflettersWritten+letterPerFrame;
@@ -199,7 +202,7 @@ async function textOnGif({file_path,textMessage,font_color,font_size,alignmentX,
                     delayCentisecs: frame.delayCentisecs,
                 }));
                 frames.push(GifCopied);   
-            });
+            }
         });
 
         GifUtil.quantizeSorokin(frames);
