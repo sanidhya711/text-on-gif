@@ -34,13 +34,14 @@ writing on gif might take some time(generally 4-5 seconds) so always use await w
 
 *the amount of time taken to print the message depends on the number of frames in the gif*
 # Example
-![GitHub Logo](https://i.imgur.com/1djICGN.gif)
+![GitHub Logo](https://i.postimg.cc/gJrq1rjJ/gif-with-text.gif)
 #
 ## All properties
 Properties    | Type    | Required   | Default
 ------------- | ------  | ---------- | -------
 file_path     | String  | Yes        | null
-text_message   | String  | Not Really | ""
+text          | String  | Not Really | ""
+font_style      | String     | No         | "calibri"
 font_color     | String  | No         | "white"
 font_size      | Int     | No         | 32
 alignment_x    | String  | No         | "middle"
@@ -58,10 +59,14 @@ ___path to a local gif file___ or ___URL___
 
 &nbsp;
 &nbsp;
-# text_message
+# text
 should contain letters and numbers
 
 *if emojis and other stuff is passed then it will not be printed on the gif*
+
+&nbsp;
+# font_style
+Any installed font
 
 &nbsp;
 # alignment

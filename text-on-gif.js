@@ -25,12 +25,11 @@ class TextOnGif extends EventEmitter{
             offset_y,
             position_x,
             position_y,
-            font_path
         }
     ){
         super();
         this.#file_path = file_path;
-        this.font_style = font_style || "chaloops";
+        this.font_style = font_style || "arial";
         this.font_color = font_color || "black";
         this.font_size = font_size || "32px";
         this.alignment_x = alignment_x || "center";
@@ -39,7 +38,6 @@ class TextOnGif extends EventEmitter{
         this.offset_y = offset_y || 10;
         this.position_x = position_x;
         this.position_y = position_y;
-        this.font_path = font_path;
 
         this.#height = null;
         this.#width = null;

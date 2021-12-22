@@ -1,12 +1,22 @@
 {
-  "name": "tetx-on-gif",
-  "version": "1.0.0",
-  "description": "",
+  "name": "text-on-gif",
+  "version": "2.0.0",
+  "description": "a simple package for writing and animating text on animated gifs",
+  "homepage": "https://github.com/sanidhya711/text-on-gif",
   "main": "text-on-gif.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "keywords": [
+    "text-on-gif",
+    "write-on-gif",
+    "message-on-gif",
+    "animate-text-gif",
+    "text on gif",
+    "text to gif",
+    "message on gif"
+  ],
+  "author": "sanidhya077",
   "license": "ISC",
   "dependencies": {
     "canvas": "^2.8.0",
