@@ -18,7 +18,9 @@ class TextOnGif extends EventEmitter{
             file_path,
             font_style,
             font_color,
+            stroke_color,
             font_size,
+            stroke_width, 
             alignment_x,
             alignment_y,
             offset_x,
@@ -31,7 +33,9 @@ class TextOnGif extends EventEmitter{
         this.#file_path = file_path;
         this.font_style = font_style || "arial";
         this.font_color = font_color || "black";
+        this.stroke_color = stroke_color || "transparent";
         this.font_size = font_size || "32px";
+        this.stroke_width = stroke_width || 1;
         this.alignment_x = alignment_x || "center";
         this.alignment_y = alignment_y || "bottom";
         this.offset_x = offset_x || 10;
@@ -90,7 +94,9 @@ class TextOnGif extends EventEmitter{
         const ctx = canvas.getContext('2d',{alpha: false});
 
         ctx.fillStyle = this.font_color;
+        ctx.strokeStyle = this.stroke_color;
         ctx.font = this.font_size + ' ' + this.font_style;
+        ctx.lineWidth = this.stroke_width
 
         if(write_path && !get_as_buffer){
             const writeStream = fs.createWriteStream(write_path);
@@ -138,6 +144,7 @@ class TextOnGif extends EventEmitter{
             
         for(let index = 0; index < this.extractedFrames.length; index++) {
             ctx.drawImage(this.extractedFrames[index].imageData, 0, 0);
+            ctx.strokeText(text,x,y);
             ctx.fillText(text,x,y);
             encoder.setDelay(this.extractedFrames[index].delay);
             encoder.setDispose(this.extractedFrames[index].disposal);
