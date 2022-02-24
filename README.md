@@ -43,7 +43,9 @@ file_path     | String  | Yes        | null
 text          | String  | Not Really | ""
 font_style      | String     | No         | "calibri"
 font_color     | String  | No         | "white"
+stroke_color    | String | No | "transparent"
 font_size      | Int     | No         | 32
+stroke_width | Int | No | 1
 alignment_x    | String  | No         | "middle"
 alignment_y   | String  | No         | "bottom"
 write_path    | String  | No         | "/gif-with-custom-text.gif"
@@ -67,6 +69,14 @@ should contain letters and numbers
 &nbsp;
 # font_style
 Any installed font
+
+&nbsp;
+# stroke_color
+Color of the stroke, leave as "transparent" for no stroke. Accepts any [CSS Color](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value).
+
+&nbsp;
+# stroke_width
+Number specifying the line width of drawn text, in 'coordinate space units'
 
 &nbsp;
 # alignment
