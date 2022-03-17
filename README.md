@@ -1,5 +1,7 @@
 *text-on-gif is a simple package for writing and animating text on animated as well as non-animated gifs*
 
+> ADDED SOME NEW FEATURES IN THE LATEST UPDATE THAT ARENT LISTED IN THE README YET. WILL UPDATE THE README SOON TOO... **SUPPORTS BASIC TEXT WRAPPING NOW.**
+
 **Basic Usage**
 ```js
     const TextOnGif = require('text-on-gif');

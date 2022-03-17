@@ -1,6 +1,6 @@
 {
   "name": "text-on-gif",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "a simple package for writing and animating text on animated gifs",
   "homepage": "https://github.com/sanidhya711/text-on-gif",
   "main": "text-on-gif.js",
@@ -19,7 +19,7 @@
   "author": "sanidhya077",
   "license": "ISC",
   "dependencies": {
-    "canvas": "^2.8.0",
+    "canvas": "^2.9.0",
     "gif-encoder-2": "^1.0.5",
     "gif-frames": "^1.0.1",
     "gifencoder": "^2.0.1",
