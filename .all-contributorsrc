@@ -1,0 +1,24 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "contributors": [
+    {
+      "login": "ienadlard",
+      "name": "ienadlard",
+      "avatar_url": "https://avatars.githubusercontent.com/u/64517108?v=4",
+      "profile": "https://github.com/ienadlard",
+      "contributions": [
+        "code"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "projectName": "text-on-gif",
+  "projectOwner": "sanidhya711",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "skipCi": true
+}
