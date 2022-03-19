@@ -3,9 +3,10 @@
 
 > **NOTES**
 >* TRANSPARENT GIFS WONT WORK AS EXPECTED (Plan on fixing it later)
->* WILL SUPPORT CUSTOM FONTS FROM NEXT UPDATE
+>* WILL SUPPORT CUSTOM FONTS FROM NEXT UPDATE OR A LIL LATER
+>* SOMETHINGS ARENT DOCUMENTED IN THE README ATM(WILL FIX SOON)
 
-**Basic Usage**
+## **Basic Usage**
 ```js
     const TextOnGif = require('text-on-gif');
 
@@ -82,6 +83,46 @@ Parameter Name                | Type    | Default Value
 [text](#text)                 | String  | ""
 [get_as_buffer](#getasbuffer) | Boolean | true
 [write_path](#writepath)      | String  | null
+
+&nbsp;
+
+### [PARAMETER DETAILS LISTEN BELOW ⬇️](#text)
+
+&nbsp;
+
+# EVENTS:
+* ### "extraction complete"
+### Fired when frame extraction is complete
+* ### "progress"
+### Fired with percentage of gif successfully encoded
+* ### "finished"
+### Fired when gif has successfully been encoded
+
+&nbsp;
+## Example:
+```js
+    var gif = new TextOnGif({
+        file_path: "path/to/gif.gif"
+    });
+ 
+    // you dont have to manually handle this but you can if you want to record the time or something
+    gif.on("extraction complete",async()=>{
+        console.log("frames extracted!");
+        gif.textOnGif({
+            text: "imma carti fan :D",
+            write_path: "path/to/gif.gif"
+        });
+    });
+
+    gif.on("progress",(percentage)=>{
+        console.log(percentage+"% done :)");
+    });
+
+    gif.on("finished",()=>{
+        console.log("gif encoding finished!");
+    });
+```
+&nbsp;
 
 # text
 

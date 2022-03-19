@@ -109,7 +109,7 @@ class TextOnGif extends EventEmitter{
         encoder.start();
 
         encoder.on('progress', percent => {
-            this.emit("progress",percent);
+            this.emit("progress", percent);
         });
 
         var words = text.split(' ');
