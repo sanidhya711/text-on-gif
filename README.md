@@ -1,5 +1,6 @@
 *text-on-gif is a simple package for writing and animating text on animated as well as non-animated gifs*
 
+
 > **NOTES**
 >* TRANSPARENT GIFS WONT WORK AS EXPECTED (Plan on fixing it later)
 >* WILL SUPPORT CUSTOM FONTS FROM NEXT UPDATE
@@ -202,7 +203,26 @@ Number of times to repeat the GIF, *n Number*
 * If n is a positive number, loop n times.
 
 &nbsp;
+# Contributors ✨
 
+Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
 
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<table>
+  <tr>
+    <td align="center"><a href="https://github.com/ienadlard"><img src="https://avatars.githubusercontent.com/u/64517108?v=4?s=100" width="100px;" alt=""/><br /><sub><b>ienadlard</b></sub></a><br /><a href="https://github.com/sanidhya711/text-on-gif/commits?author=ienadlard" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/Cryptizism"><img src="https://avatars.githubusercontent.com/u/60571306?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Cryptizism</b></sub></a><br /><a href="https://github.com/sanidhya711/text-on-gif/commits?author=Cryptizism" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://ian.wij.ma"><img src="https://avatars.githubusercontent.com/u/17692119?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Ian Wijma</b></sub></a><br /><a href="https://github.com/sanidhya711/text-on-gif/issues?q=author%3Aianwijma" title="Bug reports">🐛</a></td>
+  </tr>
+</table>
 
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
 
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
+This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
+
+#

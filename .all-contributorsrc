@@ -1,0 +1,42 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "contributors": [
+    {
+      "login": "ienadlard",
+      "name": "ienadlard",
+      "avatar_url": "https://avatars.githubusercontent.com/u/64517108?v=4",
+      "profile": "https://github.com/ienadlard",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "Cryptizism",
+      "name": "Cryptizism",
+      "avatar_url": "https://avatars.githubusercontent.com/u/60571306?v=4",
+      "profile": "https://github.com/Cryptizism",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "ianwijma",
+      "name": "Ian Wijma",
+      "avatar_url": "https://avatars.githubusercontent.com/u/17692119?v=4",
+      "profile": "https://ian.wij.ma",
+      "contributions": [
+        "bug"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "projectName": "text-on-gif",
+  "projectOwner": "sanidhya711",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "skipCi": true
+}
