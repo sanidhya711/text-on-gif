@@ -54,9 +54,10 @@ Parameter Name               | Type   | Default Value
 [offset_y](#offsety)         | Int    | 10
 [row_gap](#rowgap)           | Int    | 5
 [repeat](#rowgap)            | Int    | 0
-&nbsp;  
 
-### [read mode about these properties ▶](#writepath)
+&nbsp;
+
+### [Read mode about these properties ▶](#writepath)
 
 &nbsp;
 
@@ -81,11 +82,12 @@ Parameter Name                | Type    | Default Value
 [text](#text)                 | String  | ""
 [get_as_buffer](#getasbuffer) | Boolean | true
 [write_path](#writepath)      | String  | null
-&nbsp;  
 
 # text
 
-Text to be printed on the gif, must be a String, Number or Boolean.
+Text to be printed on the gif
+
+**Can be a String, Number or Boolean.**
 
 &nbsp;
 
@@ -225,4 +227,3 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
 
-#
