@@ -31,6 +31,15 @@
       "contributions": [
         "bug"
       ]
+    },
+    {
+      "login": "hydradev00",
+      "name": "Asrın Tekelioğlu",
+      "avatar_url": "https://avatars.githubusercontent.com/u/66910478?v=4",
+      "profile": "https://github.com/hydradev00",
+      "contributions": [
+        "bug"
+      ]
     }
   ],
   "contributorsPerLine": 7,
