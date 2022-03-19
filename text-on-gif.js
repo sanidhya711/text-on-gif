@@ -17,20 +17,19 @@ class TextOnGif extends EventEmitter{
     constructor(
         {
             file_path,
+            font_size,
             font_style,
             font_color,
             stroke_color,
-            font_size,
             stroke_width, 
             alignment_x,
             alignment_y,
-            offset_x,
-            offset_y,
             position_x,
             position_y,
+            offset_x,
+            offset_y,
             row_gap,
             repeat,
-            logs
         }
     ){
         super();
@@ -48,7 +47,6 @@ class TextOnGif extends EventEmitter{
         this.position_y = position_y;
         this.row_gap = row_gap || 5;
         this.repeat = repeat || 0;
-        this.logs = logs || false;
 
         this.#height = null;
         this.#width = null;
@@ -61,9 +59,6 @@ class TextOnGif extends EventEmitter{
 
     
     async #extractFrames(){
-        if(this.logs)
-            console.time('extracted frames');
-
         var frameData = await gifFrames({url: this.#file_path,frames: 'all',outputType: 'jpg',cumulative: true});
 
         this.#width = frameData[0].frameInfo.width;
@@ -90,17 +85,11 @@ class TextOnGif extends EventEmitter{
     
         }
         
-        if(this.logs)
-            console.timeEnd('extracted frames');
-
         this.extractionComplete = true;
         this.emit('extraction complete');
     }
 
     async #writeMessage(text,get_as_buffer,write_path){
-        if(this.logs)
-            console.time("written text");
-
         const encoder = new GIFEncoder(this.#width,this.#height,'neuquant',false,this.extractedFrames.length);
         encoder.setRepeat(this.repeat);
 
@@ -202,18 +191,11 @@ class TextOnGif extends EventEmitter{
 
         encoder.finish();
 
-        if(this.logs)
-            console.timeEnd("written text");
-
         this.emit("finished");
 
         if(get_as_buffer && write_path){
-            if(this.logs)
-                console.time("written file");
             await new Promise((resolve,reject)=>{
                 fs.writeFile(write_path, encoder.out.getData(), error => {
-                    if(this.logs)
-                        console.timeEnd("written file");
                     resolve();
                 });
             })
@@ -227,10 +209,7 @@ class TextOnGif extends EventEmitter{
     }
 
     async textOnGif({text,get_as_buffer,write_path}){
-        if(!write_path && !get_as_buffer){
-            get_as_buffer = true;
-        }
-
+        get_as_buffer = get_as_buffer || true;
         var buffer = null;
 
         if(this.extractionComplete){

@@ -1,6 +1,8 @@
 *text-on-gif is a simple package for writing and animating text on animated as well as non-animated gifs*
 
-> ADDED SOME NEW FEATURES IN THE LATEST UPDATE THAT ARENT LISTED IN THE README YET. WILL UPDATE THE README SOON TOO... **SUPPORTS BASIC TEXT WRAPPING NOW.**
+> **NOTES**
+>* TRANSPARENT GIFS WONT WORK AS EXPECTED (Plan on fixing it later)
+>* WILL SUPPORT CUSTOM FONTS FROM NEXT UPDATE
 
 **Basic Usage**
 ```js
@@ -8,6 +10,7 @@
 
     (async function(){
 
+        //create a TextOnGif object
         var gif = new TextOnGif({
           file_path: "https://media0.giphy.com/media/kFgzrTt798d2w/giphy.gif"
         });
@@ -29,111 +32,177 @@
 
     })();
 ```
-## NOTE
-**DOSENT SUPPORT TRANSPERANCY**
 
-writing on gif might take some time(generally 4-5 seconds) so always use await when getting file as buffer
-
-*the amount of time taken to print the message depends on the number of frames in the gif*
 # Example
 ![GitHub Logo](https://i.postimg.cc/gJrq1rjJ/gif-with-text.gif)
 #
-## All properties
-Properties    | Type    | Required   | Default
-------------- | ------  | ---------- | -------
-file_path     | String  | Yes        | null
-text          | String  | Not Really | ""
-font_style      | String     | No         | "calibri"
-font_color     | String  | No         | "white"
-stroke_color    | String | No | "transparent"
-font_size      | Int     | No         | 32
-stroke_width | Int | No | 1
-alignment_x    | String  | No         | "middle"
-alignment_y   | String  | No         | "bottom"
-write_path    | String  | No         | "/gif-with-custom-text.gif"
-get_as_buffer   | Boolean | No         | true
-font_path     | String  | No         | null
-position_x     | Int     | No         | null
-position_y    | Int     | No         | null
-#
-&nbsp;
+## TextOnGif Constructor Parameters
+Parameter Name               | Type   | Default Value
+---------------------------- | ------ | -------
+[file_path](#filepath)       | String | null
+[font_size](#fontsize)       | String | "32px"
+[font_style](#fontstyle)     | String | "calibri"
+[font_color](#fontcolor)     | String | "white"
+[stroke_color](#strokecolor) | String | "transparent"
+[stroke_width](#strokewidth) | Int    | 1
+[alignment_x](#alignment)    | String | "middle"
+[alignment_y](#alignment)    | String | "bottom"
+[position_x](#positionx)     | Int    | null
+[position_y](#positiony)     | Int    | null
+[offset_x](#offsetx)         | Int    | 10
+[offset_y](#offsety)         | Int    | 10
+[row_gap](#rowgap)           | Int    | 5
+[repeat](#rowgap)            | Int    | 0
 &nbsp;  
+
+### [read mode about these properties ▶](#writepath)
+
+&nbsp;
+
+# To Write Text On Gif
+**make a new TextOnGif object then call its member function textOnGif**
+
+## Example:  
+
+```js
+    var gif = new TextOnGif({
+        file_path: "path/to/gif.gif"
+    });
+
+    var buffer = await gif.textOnGif({
+        text: "Yo this readme sick :D",
+    });
+```
+
+## textOnGif Function Parameters:
+Parameter Name                | Type    | Default Value
+----------------------------- | ------- | -------
+[text](#text)                 | String  | ""
+[get_as_buffer](#getasbuffer) | Boolean | true
+[write_path](#writepath)      | String  | null
+&nbsp;  
+
+# text
+
+Text to be printed on the gif, must be a String, Number or Boolean.
+
+&nbsp;
+
+# get_as_buffer
+
+Whether to return the gif as a buffer or not after printing the message on it. 
+
+_**Set to false if buffer is not needed** to speed up printing of text on gif_
+
+&nbsp;
+
+# write_path
+
+Path of the file where the gif is to be written.
+
+*Example:*
+```js
+    await gif.textOnGif({
+        text: "huihuihui",
+        get_as_buffer: false, // set to false to speed up the process as gif is piped instead
+        write_path: "gif-with-text.gif"
+    });
+```
+
+**Gif will only be written to file if value of write_path is passed**
+
+
+&nbsp;
+
 # file_path
+Gif on which the text is to be printed,
 ___path to a local gif file___ or ___URL___
 
 &nbsp;
-&nbsp;
-# text
-should contain letters and numbers
 
-*if emojis and other stuff is passed then it will not be printed on the gif*
+# font_size
+Size of font, any [CSS font-size value](https://developer.mozilla.org/en-US/docs/Web/CSS/font-size)
+
+*Invalid values might break [font_style](#fontstyle) and [font_color](#fontcolor) too and result inna very ugly output*
 
 &nbsp;
+
 # font_style
-Any installed font
+Any installed font. Example: (font_style: "Comic Sans MS")
+
+*Invalid values might break [font_size](#fontsize) and [font_color](#fontcolor) too and result inna very ugly output*
 
 &nbsp;
+
+# font_color
+Color of the font. Accepts any [CSS Color](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value).
+
+*Invalid values might break [font_size](#fontsize) and [font_style](#fontstyle) too and result inna very ugly output*
+
+
+&nbsp;
+
 # stroke_color
 Color of the stroke, leave as "transparent" for no stroke. Accepts any [CSS Color](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value).
 
 &nbsp;
+
 # stroke_width
-Number specifying the line width of drawn text, in 'coordinate space units'
+Number specifying the line width(Outline) of drawn text, in 'coordinate space units'
 
 &nbsp;
+
 # alignment
-### valid values for Hozizontal Alignment
-* left
-* center
-* right
-### valid values for Vertical Alignment
-* top
-* middle
-* bottom
-#
-&nbsp;
-&nbsp;
-# write_path
-if value is passed for **write_path** then the gif is written to the root folder of your project with the specified file name
-#
-&nbsp;
-&nbsp;
-# get_as_buffer
-default value is true 
+### valid values for Hozizontal Alignmen (*alignment_x*)
+* "left"
+* "center"
+* "right"
+### valid values for Vertical Alignment (*alignment_y*)
+* "top"
+* "middle"
+* "bottom"
 
-set to false if you dont want the file to be returned as buffer
-#
 &nbsp;
-&nbsp;
-# font_path
-path to custom font
 
-**only FNT fonts can be used**
-DOSENT WORK WITH VERSION 2 UPDATE INNA FEW DAYS
-*you can use https://ttf2fnt for converting ttf fonts to fnt*
-#
-&nbsp;
-&nbsp;
 # position_x
-position of text on the x axis
+Starting position of text on the x axis(in pixels), *must be a Number*
 
-must be a int
+&nbsp;
 
-*now support percentage values*
-#
-&nbsp;
-&nbsp;
 # position_y
-position of text on the y axis
+Starting position of text on the y axis(in pixels), *must be a Number*
 
-must be a int
+&nbsp;
 
-*now supports percentage values*
-#
+# offset_x
+Offset of starting position of text from left or right(in pixels) depending on alignment_x, *must be a Number*  
+
+*not taken into account if position_x is specified* 
+
 &nbsp;
+
+# offset_y
+Offset of starting position of text from Top or Bottom(in pixels) depending on alignment_y, *must be a Number*  
+
+*not taken into account if position_y is specified* 
+
 &nbsp;
-# Things which will be fixed in the upcoming versions
-* will support transperancy
-* multi line text will be aligned properly
-* more user friendly 
-* make readme better XD
+
+# row_gap
+Vertical gap between rows of text(in pixels)
+
+*taken into account when text to be printed is too long for one row and is wrapped to the next row* 
+
+&nbsp;
+
+# repeat
+Number of times to repeat the GIF, *n Number*
+* If n is -1, play once.  
+* If n is 0, loop indefinitely. 
+* If n is a positive number, loop n times.
+
+&nbsp;
+
+
+
+
