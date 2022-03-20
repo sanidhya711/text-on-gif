@@ -34,19 +34,19 @@ class TextOnGif extends EventEmitter{
     ){
         super();
         this.#file_path = file_path;
-        this.font_style = font_style || "arial";
-        this.font_color = font_color || "black";
-        this.stroke_color = stroke_color || "transparent";
-        this.font_size = font_size || "32px";
-        this.stroke_width = stroke_width || 1;
-        this.alignment_x = alignment_x || "center";
-        this.alignment_y = alignment_y || "bottom";
-        this.offset_x = offset_x || 10;
-        this.offset_y = offset_y || 10;
+        this.font_style = font_style ?? "arial";
+        this.font_color = font_color ?? "black";
+        this.stroke_color = stroke_color ?? "transparent";
+        this.font_size = font_size ?? "32px";
+        this.stroke_width = stroke_width ?? 1;
+        this.alignment_x = alignment_x ?? "center";
+        this.alignment_y = alignment_y ?? "bottom";
+        this.offset_x = offset_x ?? 10;
+        this.offset_y = offset_y ?? 10;
         this.position_x = position_x;
         this.position_y = position_y;
-        this.row_gap = row_gap || 5;
-        this.repeat = repeat || 0;
+        this.row_gap = row_gap ?? 5;
+        this.repeat = repeat ?? 0;
 
         this.#height = null;
         this.#width = null;
@@ -56,7 +56,6 @@ class TextOnGif extends EventEmitter{
 
         this.#extractFrames();
     }
-
     
     async #extractFrames(){
         var frameData = await gifFrames({url: this.#file_path,frames: 'all',outputType: 'jpg',cumulative: true});
@@ -103,6 +102,9 @@ class TextOnGif extends EventEmitter{
 
         if(write_path && !get_as_buffer){
             const writeStream = fs.createWriteStream(write_path);
+            writeStream.on('error',(error)=>{
+                return Promise.reject(error);
+            });
             encoder.createReadStream().pipe(writeStream);
         }
 
@@ -116,7 +118,6 @@ class TextOnGif extends EventEmitter{
 
         var approximateLineHeight = ctx.measureText("M").width;
         var spaceWidth = ctx.measureText("M M").width - (ctx.measureText("M").width * 2);
-        this.row_gap = this.row_gap ?? approximateLineHeight / 3;
 
         var rows = [{text: words[0] + " ",width: ctx.measureText(words[0]).width + spaceWidth}];
 
@@ -128,7 +129,7 @@ class TextOnGif extends EventEmitter{
             };
         }
 
-        if(this.position_x){
+        if(this.position_x != null){
             ctx.textAlign = "start";
             var x = this.position_x;
         }else{
@@ -145,7 +146,7 @@ class TextOnGif extends EventEmitter{
         }
         
         if(rows.length == 1){
-            if(this.position_y){
+            if(this.position_y != null){
                 ctx.textBaseline = "bottom";
                 var y = this.position_y;
             }else{
@@ -196,7 +197,11 @@ class TextOnGif extends EventEmitter{
         if(get_as_buffer && write_path){
             await new Promise((resolve,reject)=>{
                 fs.writeFile(write_path, encoder.out.getData(), error => {
-                    resolve();
+                    if(error){
+                        reject(error);
+                    }else{
+                        resolve();
+                    }
                 });
             })
         }
@@ -209,7 +214,7 @@ class TextOnGif extends EventEmitter{
     }
 
     async textOnGif({text,get_as_buffer,write_path}){
-        get_as_buffer = get_as_buffer || true;
+        get_as_buffer = get_as_buffer ?? true;
         var buffer = null;
 
         if(this.extractionComplete){

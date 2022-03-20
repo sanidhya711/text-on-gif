@@ -39,26 +39,26 @@
 ![GitHub Logo](https://i.postimg.cc/gJrq1rjJ/gif-with-text.gif)
 #
 ## TextOnGif Constructor Parameters
-Parameter Name               | Type   | Default Value
----------------------------- | ------ | -------
-[file_path](#filepath)       | String | null
-[font_size](#fontsize)       | String | "32px"
-[font_style](#fontstyle)     | String | "calibri"
-[font_color](#fontcolor)     | String | "white"
-[stroke_color](#strokecolor) | String | "transparent"
-[stroke_width](#strokewidth) | Int    | 1
-[alignment_x](#alignment)    | String | "middle"
-[alignment_y](#alignment)    | String | "bottom"
-[position_x](#positionx)     | Int    | null
-[position_y](#positiony)     | Int    | null
-[offset_x](#offsetx)         | Int    | 10
-[offset_y](#offsety)         | Int    | 10
-[row_gap](#rowgap)           | Int    | 5
-[repeat](#rowgap)            | Int    | 0
+Parameter Name                | Type   | Default Value
+----------------------------- | ------ | -------
+[file_path](#file_path)       | String | null
+[font_size](#font_size)       | String | "32px"
+[font_style](#font_style)     | String | "calibri"
+[font_color](#font_color)     | String | "white"
+[stroke_color](#stroke_color) | String | "transparent"
+[stroke_width](#stroke_width) | Int    | 1
+[alignment_x](#alignment)     | String | "middle"
+[alignment_y](#alignment)     | String | "bottom"
+[position_x](#position_x)     | Int    | null
+[position_y](#position_y)     | Int    | null
+[offset_x](#offset_x)         | Int    | 10
+[offset_y](#offset_y)         | Int    | 10
+[row_gap](#row_gap)           | Int    | 5
+[repeat](#repeat)             | Int    | 0
 
 &nbsp;
 
-### [Read mode about these properties ▶](#writepath)
+### [PARAMETER DETAILS LISTEN BELOW ⬇️](#filepath)
 
 &nbsp;
 
@@ -78,11 +78,11 @@ Parameter Name               | Type   | Default Value
 ```
 
 ## textOnGif Function Parameters:
-Parameter Name                | Type    | Default Value
------------------------------ | ------- | -------
-[text](#text)                 | String  | ""
-[get_as_buffer](#getasbuffer) | Boolean | true
-[write_path](#writepath)      | String  | null
+Parameter Name                  | Type    | Default Value
+------------------------------- | ------- | -------
+[text](#text)                   | String  | ""
+[get_as_buffer](#get_as_buffer) | Boolean | true
+[write_path](#write_path)       | String  | null
 
 &nbsp;
 
@@ -92,7 +92,7 @@ Parameter Name                | Type    | Default Value
 
 # EVENTS:
 * ### "extraction complete"
-### Fired when frame extraction is complete
+### Fired once when frame extraction is complete
 * ### "progress"
 ### Fired with percentage of gif successfully encoded
 * ### "finished"
@@ -147,8 +147,8 @@ Path of the file where the gif is to be written.
 *Example:*
 ```js
     await gif.textOnGif({
-        text: "huihuihui",
-        get_as_buffer: false, // set to false to speed up the process as gif is piped instead
+        text: "huihuihui", 
+        get_as_buffer: false,// set to false to speed up the process as gif is piped instead 
         write_path: "gif-with-text.gif"
     });
 ```
@@ -159,7 +159,7 @@ Path of the file where the gif is to be written.
 &nbsp;
 
 # file_path
-Gif on which the text is to be printed,
+Gif on which the text is to be printed,  
 ___path to a local gif file___ or ___URL___
 
 &nbsp;
@@ -167,37 +167,39 @@ ___path to a local gif file___ or ___URL___
 # font_size
 Size of font, any [CSS font-size value](https://developer.mozilla.org/en-US/docs/Web/CSS/font-size)
 
-*Invalid values might break [font_style](#fontstyle) and [font_color](#fontcolor) too and result inna very ugly output*
+*Invalid values might break [font_style](#font_style) and [font_color](#font_color) too and result inna very ugly output*
 
 &nbsp;
 
 # font_style
 Any installed font. Example: (font_style: "Comic Sans MS")
 
-*Invalid values might break [font_size](#fontsize) and [font_color](#fontcolor) too and result inna very ugly output*
+*Invalid values might break [font_size](#font_size) and [font_color](#font_color) too and result inna very ugly output*
 
 &nbsp;
 
 # font_color
 Color of the font. Accepts any [CSS Color](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value).
 
-*Invalid values might break [font_size](#fontsize) and [font_style](#fontstyle) too and result inna very ugly output*
+*Invalid values might break [font_size](#font_size) and [font_style](#font_style) too and result inna very ugly output*
 
 
 &nbsp;
 
 # stroke_color
-Color of the stroke, leave as "transparent" for no stroke. Accepts any [CSS Color](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value).
+Color of the stroke, leave as "transparent" for no stroke.    
+Accepts any [CSS Color](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value).
 
 &nbsp;
 
 # stroke_width
-Number specifying the line width(Outline) of drawn text, in 'coordinate space units'
+Number specifying the line width(Outline) of drawn text,  
+in *'coordinate space units'*
 
 &nbsp;
 
 # alignment
-### valid values for Hozizontal Alignmen (*alignment_x*)
+### valid values for Hozizontal Alignment (*alignment_x*)
 * "left"
 * "center"
 * "right"
@@ -209,12 +211,14 @@ Number specifying the line width(Outline) of drawn text, in 'coordinate space un
 &nbsp;
 
 # position_x
-Starting position of text on the x axis(in pixels), *must be a Number*
+Starting position of text on the x axis(in pixels)  
+*must be a Number*
 
 &nbsp;
 
 # position_y
-Starting position of text on the y axis(in pixels), *must be a Number*
+Starting position of text on the y axis(in pixels)  
+*must be a Number*
 
 &nbsp;
 
