@@ -161,7 +161,9 @@ v1 of this library was structed as a single function but in v2 many major breaki
 
 &nbsp;
 
-> # **PARAMETER DETAILS ⬇️**
+> ## **PARAMETER DETAILS ⬇️**
+
+&nbsp;
 
 # text
 
