@@ -161,7 +161,12 @@ v1 of this library was structed as a single function but in v2 many major breaki
 
 &nbsp;
 
-> ## **PARAMETER DETAILS ⬇️**
+> # **PARAMETER DETAILS ⬇️**
+All  the parameter details are listed below
+
+If you have any issue regaring the readme then open an issue and i'll try my best to help you out.
+
+Or if you have any suggestions or request for new features just open an issue.
 
 &nbsp;
 
