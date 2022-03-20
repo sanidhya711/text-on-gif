@@ -62,6 +62,7 @@ class TextOnGif extends EventEmitter{
 
         this.#width = frameData[0].frameInfo.width;
         this.#height = frameData[0].frameInfo.height;
+        this.emit('extracted frame info');
 
         for (let index = 0; index < frameData.length; index++) {
 
@@ -234,11 +235,27 @@ class TextOnGif extends EventEmitter{
     }
 
     get width(){
-        return this.#width;
+        if(this.#width){
+            return Promise.resolve(this.#width);
+        }else{
+            return new Promise((resolve,reject)=>{
+                this.on("extracted frame info",()=>{
+                    resolve(this.#width);
+                });
+            });
+        }
     }
 
     get height(){
-        return this.#height;
+        if(this.#height){
+            return Promise.resolve(this.#height);
+        }else{
+            return new Promise((resolve,reject)=>{
+                this.on("extracted frame info",()=>{
+                    resolve(this.#height);
+                });
+            });
+        }
     }
 
     get file_path(){

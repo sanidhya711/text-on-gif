@@ -1,10 +1,8 @@
-*text-on-gif is a simple package for writing and animating text on animated as well as non-animated gifs*
-
+*text-on-gif is a simple package for writing text on animated as well as non-animated gifs*
 
 > **NOTES**
 >* TRANSPARENT GIFS WONT WORK AS EXPECTED (Plan on fixing it later)
->* WILL SUPPORT CUSTOM FONTS FROM NEXT UPDATE OR A LIL LATER
->* WILL MAKE README BETTER SOON
+>* WILL SUPPORT CUSTOM FONTS SOON
 
 ## **Basic Usage**
 ```js
@@ -58,12 +56,41 @@ Parameter Name                | Type   | Default Value
 
 &nbsp;
 
-### [PARAMETER DETAILS LISTEN BELOW ⬇️](#filepath)
+> NOTE: Even after creating an object you can always change these properties  
+(except: file_path).
+
+**Example:** 
+```js
+    var gif = new TextOnGif({
+        file_path: "path/to/gif.gif",
+        font_color: "orange"
+    });
+
+    //gif 1 has orange colored text
+    await gif.textOnGif({
+        text: "orange colored text",
+        write_path: "gif1.gif"
+    });
+
+    //CHANGING FONT COLOR AND SIZE
+    gif.font_color = "blue";
+    gif.font_size = "100px";
+
+    //gif 2 has blue colored text
+    await gif.textOnGif({
+        text: "blue colored text",
+        write_path: "gif2.gif"
+    });
+```
 
 &nbsp;
 
-# To Write Text On Gif
-**make a new TextOnGif object then call its member function textOnGif**
+### [PARAMETER DETAILS LISTED BELOW ⬇️](#file_path)
+
+&nbsp;
+
+# To Write Text On Gif :
+### ***make a new TextOnGif object then call its member function textOnGif***
 
 ## Example:  
 
@@ -86,20 +113,20 @@ Parameter Name                  | Type    | Default Value
 
 &nbsp;
 
-### [PARAMETER DETAILS LISTEN BELOW ⬇️](#text)
+### [PARAMETER DETAILS LISTED BELOW ⬇️](#text)
 
 &nbsp;
 
 # EVENTS:
-* ### "extraction complete"
-### Fired once when frame extraction is complete
-* ### "progress"
-### Fired with percentage of gif successfully encoded
-* ### "finished"
-### Fired when gif has successfully been encoded
+* ***"extraction complete"***
+#### Fired once when frame extraction is complete
+* ***"progress"***
+#### Fired with percentage of gif successfully encoded
+* ***"finished"***
+#### Fired when gif has successfully been encoded
 
 &nbsp;
-## Example:
+### Example:
 ```js
     var gif = new TextOnGif({
         file_path: "path/to/gif.gif"
@@ -123,6 +150,18 @@ Parameter Name                  | Type    | Default Value
     });
 ```
 &nbsp;
+
+> # Reason for Using Class Structure:
+
+v1 of this library was structed as a single function but in v2 many major breaking changes were made and I shifted it to class structure mainly because if you want to write different text on the same gif multiple times(that was my use case) then you wouldnt have to extract the gif frames everytime and that saves a lot of time and resources(reduces it to half or even more the second time you write on the gif) 
+
+* ***So like if you want to reuse a gif and write on it multiple times then its very fast after the first time(2x or more maybe)***
+
+* ***Another use case would be that you could preload a gif that you know you'll use and write the text on it at a later time therefore save some time***
+
+&nbsp;
+
+> # **PARAMETER DETAILS ⬇️**
 
 # text
 
@@ -161,6 +200,8 @@ Path of the file where the gif is to be written.
 # file_path
 Gif on which the text is to be printed,  
 ___path to a local gif file___ or ___URL___
+
+*gif.file_path is read only and cant be altered after the TextOnGif object is created*
 
 &nbsp;
 
@@ -250,6 +291,14 @@ Number of times to repeat the GIF, *n Number*
 * If n is a positive number, loop n times.
 
 &nbsp;
+
+
+# Gif Height And Width
+*Gif's width and height are unalterable*  
+You can access the gif's width and height using "await gif.width" and "await gif.height;" respectively where gif is a *TextOnGif object*.
+
+&nbsp;
+
 # Contributors ✨
 
 Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
