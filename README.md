@@ -36,6 +36,22 @@
 # Example
 ![GitHub Logo](https://i.postimg.cc/gJrq1rjJ/gif-with-text.gif)
 #
+
+# To Write Text On Gif :
+### ***make a new TextOnGif object then call its member function textOnGif***
+
+## Example:  
+
+```js
+    var gif = new TextOnGif({
+        file_path: "path/to/gif.gif"
+    });
+
+    var buffer = await gif.textOnGif({
+        text: "Yo this readme sick :D",
+    });
+```
+
 ## TextOnGif Constructor Parameters
 Parameter Name                | Type   | Default Value
 ----------------------------- | ------ | -------
@@ -89,21 +105,6 @@ Parameter Name                | Type   | Default Value
 
 &nbsp;
 
-# To Write Text On Gif :
-### ***make a new TextOnGif object then call its member function textOnGif***
-
-## Example:  
-
-```js
-    var gif = new TextOnGif({
-        file_path: "path/to/gif.gif"
-    });
-
-    var buffer = await gif.textOnGif({
-        text: "Yo this readme sick :D",
-    });
-```
-
 ## textOnGif Function Parameters:
 Parameter Name                  | Type    | Default Value
 ------------------------------- | ------- | -------
@@ -149,16 +150,6 @@ Parameter Name                  | Type    | Default Value
         console.log("gif encoding finished!");
     });
 ```
-&nbsp;
-
-> # Reason for Using Class Structure:
-
-v1 of this library was structed as a single function but in v2 many major breaking changes were made and I shifted it to class structure mainly because if you want to write different text on the same gif multiple times(that was my use case) then you wouldnt have to extract the gif frames everytime and that saves a lot of time and resources(reduces it to half or even more the second time you write on the gif) 
-
-* ***So like if you want to reuse a gif and write on it multiple times then its very fast after the first time(2x or more maybe)***
-
-* ***Another use case would be that you could preload a gif that you know you'll use and write the text on it at a later time therefore save some time***
-
 &nbsp;
 
 > # **PARAMETER DETAILS ⬇️**
@@ -303,7 +294,15 @@ Number of times to repeat the GIF, *n Number*
 # Gif Height And Width
 *Gif's width and height are unalterable*  
 You can access the gif's width and height using "await gif.width" and "await gif.height;" respectively where gif is a *TextOnGif object*.
+&nbsp;
+# 
+> # Reason for Using Class Structure:
 
+v1 of this library was structed as a single function but in v2 many major breaking changes were made and I shifted it to class structure mainly because if you want to write different text on the same gif multiple times(that was my use case) then you wouldnt have to extract the gif frames everytime and that saves a lot of time and resources(reduces it to half or even more the second time you write on the gif) 
+
+* ***So like if you want to reuse a gif and write on it multiple times then its very fast after the first time(2x or more maybe)***
+
+* ***Another use case would be that you could preload a gif that you know you'll use and write the text on it at a later time therefore save some time***
 &nbsp;
 
 # Contributors ✨
