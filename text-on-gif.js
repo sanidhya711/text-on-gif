@@ -6,7 +6,7 @@ const Canvas = require('canvas');
 const Events = require('events');
 const fs = require('fs');
 
-class TextOnGif extends Events.EventEmitter{
+class TextOnGif extends Events{
 
     #file_path;
     #width;
