@@ -13,6 +13,7 @@
         //create a TextOnGif object
         var gif = new TextOnGif({
           file_path: "https://media0.giphy.com/media/Ju7l5y9osyymQ/giphy.gif"
+          //path to local file, url or Buffer
         });
 
         //get as buffer
