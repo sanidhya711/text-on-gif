@@ -1,14 +1,12 @@
 'use strict';
 
 const gifFrames = require('gif-frames');
-const GIFEncoder = require('gif-encoder-2')
-const fs = require('fs');
+const GIFEncoder = require('gif-encoder-2');
 const Canvas = require('canvas');
-const Image = Canvas.Image;
-const createCanvas = Canvas.createCanvas;
-const EventEmitter = require('events').EventEmitter;
+const Events = require('events');
+const fs = require('fs');
 
-class TextOnGif extends EventEmitter{
+class TextOnGif extends Events.EventEmitter{
 
     #file_path;
     #width;
@@ -68,7 +66,7 @@ class TextOnGif extends EventEmitter{
 
             await new Promise((resolve,reject)=>{
 
-                const image = new Image();
+                const image = new Canvas.Image();
 
                 image.onload = () => {
                     this.extractedFrames.push({
@@ -93,7 +91,7 @@ class TextOnGif extends EventEmitter{
         const encoder = new GIFEncoder(this.#width,this.#height,'neuquant',false,this.extractedFrames.length);
         encoder.setRepeat(this.repeat);
 
-        const canvas = createCanvas(this.#width,this.#height);
+        const canvas = Canvas.createCanvas(this.#width,this.#height);
         const ctx = canvas.getContext('2d',{alpha: false});
 
         ctx.fillStyle = this.font_color;

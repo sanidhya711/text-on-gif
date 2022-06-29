@@ -12,7 +12,7 @@
 
         //create a TextOnGif object
         var gif = new TextOnGif({
-          file_path: "https://media0.giphy.com/media/kFgzrTt798d2w/giphy.gif"
+          file_path: "https://media0.giphy.com/media/Ju7l5y9osyymQ/giphy.gif"
         });
 
         //get as buffer
@@ -53,27 +53,27 @@
 ```
 
 ## TextOnGif Constructor Parameters
-Parameter Name                | Type   | Default Value
------------------------------ | ------ | -------
-[file_path](#file_path)       | String | null
-[font_size](#font_size)       | String | "32px"
-[font_style](#font_style)     | String | "calibri"
-[font_color](#font_color)     | String | "white"
-[stroke_color](#stroke_color) | String | "transparent"
-[stroke_width](#stroke_width) | Int    | 1
-[alignment_x](#alignment)     | String | "middle"
-[alignment_y](#alignment)     | String | "bottom"
-[position_x](#position_x)     | Int    | null
-[position_y](#position_y)     | Int    | null
-[offset_x](#offset_x)         | Int    | 10
-[offset_y](#offset_y)         | Int    | 10
-[row_gap](#row_gap)           | Int    | 5
-[repeat](#repeat)             | Int    | 0
+Parameter Name                | Type               | Default Value
+----------------------------- | ------------------ | -------
+[file_path](#file_path)       | String \|\| Buffer | null
+[font_size](#font_size)       | String             | "32px"
+[font_style](#font_style)     | String             | "calibri"
+[font_color](#font_color)     | String             | "white"
+[stroke_color](#stroke_color) | String             | "transparent"
+[stroke_width](#stroke_width) | Int                | 1
+[alignment_x](#alignment)     | String             | "middle"
+[alignment_y](#alignment)     | String             | "bottom"
+[position_x](#position_x)     | Int                | null
+[position_y](#position_y)     | Int                | null
+[offset_x](#offset_x)         | Int                | 10
+[offset_y](#offset_y)         | Int                | 10
+[row_gap](#row_gap)           | Int                | 5
+[repeat](#repeat)             | Int                | 0
 
 &nbsp;
 
 > NOTE: Even after creating an object you can always change these properties  
-(except: file_path).
+(exception: file_path).
 
 **Example:** 
 ```js
@@ -153,11 +153,11 @@ Parameter Name                  | Type    | Default Value
 &nbsp;
 
 > # **PARAMETER DETAILS ⬇️**
-All  the parameter details are listed below
+All the parameter details are listed below
 
-If you have any issue regaring the readme then open an issue and i'll try my best to help you out.
+* Pull requests to improve this ugly readme are more than welcome :D
 
-Or if you have any suggestions or request for new features just open an issue.
+* Or if you have any suggestions or request for new features feel free to open an issue.
 
 &nbsp;
 
@@ -197,7 +197,7 @@ Path of the file where the gif is to be written.
 
 # file_path
 Gif on which the text is to be printed,  
-___path to a local gif file___ or ___URL___
+___path to a local gif file / URL___ or ___in-memory buffer___
 
 *gif.file_path is read only and cant be altered after the TextOnGif object is created*
 
