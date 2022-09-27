@@ -35,7 +35,7 @@
 ```
 
 # Example
-![GitHub Logo](https://i.postimg.cc/gJrq1rjJ/gif-with-text.gif)
+![GitHub Logo](https://i.imgur.com/NuO5Tyu.gif)
 #
 
 # To Write Text On Gif :
