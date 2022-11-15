@@ -1,8 +1,8 @@
 *text-on-gif is a simple package for writing text on animated as well as non-animated gifs*
 
 > **NOTES**
->* TRANSPARENT GIFS WONT WORK AS EXPECTED (Plan on fixing it later)
->* WILL SUPPORT CUSTOM FONTS SOON
+>* SUPPORTS TRANSPARENT GIFS TOO NOW
+>* ADDED OPTION TO REGESTER FONTS
 
 ## **Basic Usage**
 ```js
@@ -27,7 +27,7 @@
         //write as file
         await gif.textOnGif({
             text: "text on gif sucks",
-            get_as_buffer: false,
+            get_as_buffer: false, //set to false to save time
             write_path: "gif-with-text.gif"
         });
 
@@ -70,11 +70,12 @@ Parameter Name                | Type               | Default Value
 [offset_y](#offset_y)         | Int                | 10
 [row_gap](#row_gap)           | Int                | 5
 [repeat](#repeat)             | Int                | 0
+[transparent](#transparent)   | Boolean            | false
 
 &nbsp;
 
 > NOTE: Even after creating an object you can always change these properties  
-(exception: file_path).
+(exception: file_path and transparent).
 
 **Example:** 
 ```js
@@ -116,6 +117,11 @@ Parameter Name                  | Type    | Default Value
 &nbsp;
 
 ### [PARAMETER DETAILS LISTED BELOW ⬇️](#text)
+
+&nbsp;
+
+
+To use a font file that is not installed as a system font, use registerFont(). This must be done before calling textOnGif()
 
 &nbsp;
 
@@ -288,6 +294,14 @@ Number of times to repeat the GIF, *n Number*
 * If n is -1, play once.  
 * If n is 0, loop indefinitely. 
 * If n is a positive number, loop n times.
+
+&nbsp;
+
+
+# transparent
+whether the gif should have a transparent background or not
+* If set to true then all ***black pixels are rendered as transparent*** 
+* If set to false then transparent pixels are automatically rendered as black
 
 &nbsp;
 

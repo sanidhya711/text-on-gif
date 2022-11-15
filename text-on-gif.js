@@ -9,6 +9,7 @@ const fs = require('fs');
 class TextOnGif extends Events{
 
     #file_path;
+    #transparent;
     #width;
     #height;
 
@@ -28,10 +29,10 @@ class TextOnGif extends Events{
             offset_y,
             row_gap,
             repeat,
+            transparent,
         }
     ){
         super();
-        this.#file_path = file_path;
         this.font_style = font_style ?? "arial";
         this.font_color = font_color ?? "black";
         this.stroke_color = stroke_color ?? "transparent";
@@ -46,8 +47,10 @@ class TextOnGif extends Events{
         this.row_gap = row_gap ?? 5;
         this.repeat = repeat ?? 0;
 
-        this.#height = null;
+        this.#file_path = file_path;
+        this.#transparent = transparent ?? false;
         this.#width = null;
+        this.#height = null;
 
         this.extractedFrames = [];
         this.extractionComplete = false;
@@ -56,7 +59,7 @@ class TextOnGif extends Events{
     }
     
     async #extractFrames(){
-        var frameData = await gifFrames({url: this.#file_path,frames: 'all',outputType: 'jpg',cumulative: true});
+        var frameData = await gifFrames({url: this.#file_path,frames: 'all',outputType: 'png', cumulative: false});
 
         this.#width = frameData[0].frameInfo.width;
         this.#height = frameData[0].frameInfo.height;
@@ -64,7 +67,7 @@ class TextOnGif extends Events{
 
         for (let index = 0; index < frameData.length; index++) {
 
-            await new Promise((resolve,reject)=>{
+            await new Promise(async (resolve,reject)=>{
 
                 const image = new Canvas.Image();
 
@@ -74,11 +77,17 @@ class TextOnGif extends Events{
                         delay: frameData[index].frameInfo.delay * 10,
                         disposal: frameData[index].frameInfo.disposal
                     });
+
+                    fs.unlink('frame-'+index+'.png',()=>{});
                     resolve();
                 }
 
-                image.src = frameData[index].getImage()._obj;
-                    
+                var writeStream = frameData[index].getImage().pipe(fs.createWriteStream('frame-'+index+'.png'));
+                
+                writeStream.on('finish',()=>{
+                    image.src = 'frame-'+index+'.png';
+                });
+                
             });
     
         }
@@ -89,10 +98,13 @@ class TextOnGif extends Events{
 
     async #writeMessage(text,get_as_buffer,write_path){
         const encoder = new GIFEncoder(this.#width,this.#height,'neuquant',false,this.extractedFrames.length);
+        if(this.#transparent){
+            encoder.setTransparent(true);
+        }
         encoder.setRepeat(this.repeat);
 
         const canvas = Canvas.createCanvas(this.#width,this.#height);
-        const ctx = canvas.getContext('2d',{alpha: false});
+        const ctx = canvas.getContext('2d');
 
         ctx.fillStyle = this.font_color;
         ctx.strokeStyle = this.stroke_color;
@@ -175,6 +187,7 @@ class TextOnGif extends Events{
 
         for(let index = 0; index < this.extractedFrames.length; index++){
             ctx.drawImage(this.extractedFrames[index].imageData, 0, 0);
+            ctx.fillStyle = this.font_color;
             if(rows.length == 1){
                 ctx.strokeText(text,x,y);
                 ctx.fillText(text,x,y);
@@ -187,6 +200,10 @@ class TextOnGif extends Events{
             encoder.setDelay(this.extractedFrames[index].delay);
             encoder.setDispose(this.extractedFrames[index].disposal);
             encoder.addFrame(ctx);
+
+            if(this.extractedFrames[index].disposal == 2){
+                ctx.clearRect(0,0,this.#width,this.#height);
+            }
         }
 
         encoder.finish();
@@ -230,6 +247,10 @@ class TextOnGif extends Events{
         if(buffer){
             return Promise.resolve(buffer);
         }
+    }
+
+    static registerFont({path,family}){
+        Canvas.registerFont(path,{family: family})
     }
 
     get width(){
