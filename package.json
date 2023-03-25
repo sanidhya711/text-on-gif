@@ -21,7 +21,7 @@
   "author": "sanidhya077",
   "license": "ISC",
   "dependencies": {
-    "canvas": "^2.10.2",
+    "canvas": "^2.11.0",
     "gif-encoder-2": "^1.0.5",
     "gif-frames": "^1.0.1"
   }

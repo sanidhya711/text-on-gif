@@ -1,3 +1,6 @@
+// Sanidhya077 (sanidhyajain077@gmail.com)
+// last updated[15/2/2023][06:20 UTC]
+
 'use strict';
 
 const gifFrames = require('gif-frames');
@@ -12,6 +15,8 @@ class TextOnGif extends Events{
     #transparent;
     #width;
     #height;
+    #noOfFrames;
+    #retained;
 
     constructor(
         {
@@ -49,8 +54,6 @@ class TextOnGif extends Events{
 
         this.#file_path = file_path;
         this.#transparent = transparent ?? false;
-        this.#width = null;
-        this.#height = null;
 
         this.extractedFrames = [];
         this.extractionComplete = false;
@@ -59,10 +62,11 @@ class TextOnGif extends Events{
     }
     
     async #extractFrames(){
-        var frameData = await gifFrames({url: this.#file_path,frames: 'all',outputType: 'png', cumulative: false});
+        const frameData = await gifFrames({url: this.#file_path,frames: 'all',outputType: 'png', cumulative: false});
 
         this.#width = frameData[0].frameInfo.width;
         this.#height = frameData[0].frameInfo.height;
+        this.#noOfFrames = frameData.length;
         this.emit('extracted frame info');
 
         for (let index = 0; index < frameData.length; index++) {
@@ -82,7 +86,7 @@ class TextOnGif extends Events{
                     resolve();
                 }
 
-                var writeStream = frameData[index].getImage().pipe(fs.createWriteStream('frame-'+index+'.png'));
+                const writeStream = frameData[index].getImage().pipe(fs.createWriteStream('frame-'+index+'.png'));
                 
                 writeStream.on('finish',()=>{
                     image.src = 'frame-'+index+'.png';
@@ -96,20 +100,19 @@ class TextOnGif extends Events{
         this.emit('extraction complete');
     }
 
-    async #writeMessage(text,get_as_buffer,write_path){
-        const encoder = new GIFEncoder(this.#width,this.#height,'neuquant',false,this.extractedFrames.length);
-        if(this.#transparent){
-            encoder.setTransparent(true);
+    async #writeMessage(text,get_as_buffer,write_path,retain){
+        if(write_path || get_as_buffer){
+            var encoder = new GIFEncoder(this.#width,this.#height,'neuquant',false,this.extractedFrames.length);
+            if(this.#transparent){
+                encoder.setTransparent(true);
+            }
+            encoder.setRepeat(this.repeat);
         }
-        encoder.setRepeat(this.repeat);
 
         const canvas = Canvas.createCanvas(this.#width,this.#height);
         const ctx = canvas.getContext('2d');
 
-        ctx.fillStyle = this.font_color;
-        ctx.strokeStyle = this.stroke_color;
         ctx.font = this.font_size + ' ' + this.font_style;
-        ctx.lineWidth = this.stroke_width;
 
         if(write_path && !get_as_buffer){
             const writeStream = fs.createWriteStream(write_path);
@@ -119,16 +122,18 @@ class TextOnGif extends Events{
             encoder.createReadStream().pipe(writeStream);
         }
 
-        encoder.start();
+        if(encoder){
+            encoder.start();
 
-        encoder.on('progress', percent => {
-            this.emit("progress", percent);
-        });
+            encoder.on('progress', percent => {
+                this.emit("progress", percent);
+            });
+        }
 
-        var words = text.split(' ');
+        const words = text.split(' ');
 
-        var approximateLineHeight = ctx.measureText("M").width;
-        var spaceWidth = ctx.measureText("M M").width - (ctx.measureText("M").width * 2);
+        const approximateLineHeight = ctx.measureText("M").width;
+        const spaceWidth = ctx.measureText("M M").width - (ctx.measureText("M").width * 2);
 
         var rows = [{text: words[0] + " ",width: ctx.measureText(words[0]).width + spaceWidth}];
 
@@ -155,12 +160,12 @@ class TextOnGif extends Events{
                 var x = this.#width / 2;
             }
         }
-        
-        if(rows.length == 1){
-            if(this.position_y != null){
-                ctx.textBaseline = "bottom";
-                var y = this.position_y;
-            }else{
+
+        if(this.position_y != null){
+            ctx.textBaseline = "top";
+            var y = this.position_y;
+        }else{
+            if(rows.length == 1){
                 if(this.alignment_y == "top"){
                     ctx.textBaseline = "hanging";
                     var y = this.offset_y;
@@ -171,23 +176,37 @@ class TextOnGif extends Events{
                     ctx.textBaseline = "bottom";
                     var y = this.#height - this.offset_y;
                 }
-            }
-        }else{
-            if(this.alignment_y == "top"){
-                ctx.textBaseline = "hanging";
-                var y = this.offset_y;
-            }else if(this.alignment_y == "middle"){
-                ctx.textBaseline = "top";
-                var y = (this.height - ((rows.length * approximateLineHeight) + ((rows.length -1) * this.row_gap))) / 2;
             }else{
-                ctx.textBaseline = "bottom";
-                var y = this.#height - (((rows.length - 1) * (approximateLineHeight + this.row_gap)) + this.offset_y);
+                if(this.alignment_y == "top"){
+                    ctx.textBaseline = "hanging";
+                    var y = this.offset_y;
+                }else if(this.alignment_y == "middle"){
+                    ctx.textBaseline = "top";
+                    var y = (this.height - ((rows.length * approximateLineHeight) + ((rows.length -1) * this.row_gap))) / 2;
+                }else{
+                    ctx.textBaseline = "bottom";
+                    var y = this.#height - (((rows.length - 1) * (approximateLineHeight + this.row_gap)) + this.offset_y);
+                }
             }
         }
-
+        
         for(let index = 0; index < this.extractedFrames.length; index++){
-            ctx.drawImage(this.extractedFrames[index].imageData, 0, 0);
+            this.emit("on frame", index + 1);
+
+            if(!this.#retained) 
+                ctx.drawImage(this.extractedFrames[index].imageData, 0, 0);
+            else 
+                ctx.putImageData(this.extractedFrames[index].imageData, 0, 0);
+        
+            ctx.strokeStyle = this.stroke_color;
+            ctx.lineWidth = this.stroke_width;
+            ctx.font = this.font_size + ' ' + this.font_style;
             ctx.fillStyle = this.font_color;
+
+            if(this.extractedFrames[index].disposal != 2){
+                var withoutText = ctx.getImageData(0,0,this.#width,this.#height);
+            }
+        
             if(rows.length == 1){
                 ctx.strokeText(text,x,y);
                 ctx.fillText(text,x,y);
@@ -197,17 +216,24 @@ class TextOnGif extends Events{
                     ctx.fillText(rows[rowIndex].text.slice(0,-1), x,(rowIndex * (approximateLineHeight + this.row_gap)) + y);
                 }
             }
-            encoder.setDelay(this.extractedFrames[index].delay);
-            encoder.setDispose(this.extractedFrames[index].disposal);
-            encoder.addFrame(ctx);
+
+            if(encoder){
+                encoder.setDelay(this.extractedFrames[index].delay);
+                encoder.setDispose(this.extractedFrames[index].disposal);
+                encoder.addFrame(ctx);
+            }
+
+            if(retain) this.extractedFrames[index].imageData = ctx.getImageData(0,0,this.#width,this.#height);
 
             if(this.extractedFrames[index].disposal == 2){
                 ctx.clearRect(0,0,this.#width,this.#height);
+            }else{
+                ctx.putImageData(withoutText,0,0);
             }
         }
 
-        encoder.finish();
-
+        this.#retained = this.#retained ? true : retain;
+        if(encoder) encoder.finish();
         this.emit("finished");
 
         if(get_as_buffer && write_path){
@@ -229,16 +255,17 @@ class TextOnGif extends Events{
         }
     }
 
-    async textOnGif({text,get_as_buffer,write_path}){
+    async textOnGif({text,get_as_buffer,write_path,retain}){
         get_as_buffer = get_as_buffer ?? true;
+        retain = retain ?? false;
         var buffer = null;
 
         if(this.extractionComplete){
-            buffer = await this.#writeMessage(text,get_as_buffer,write_path);
+            buffer = await this.#writeMessage(text,get_as_buffer,write_path,retain);
         }else{
             await new Promise((resolve,reject)=>{
                 this.on('extraction complete',async()=>{
-                    buffer = await this.#writeMessage(text,get_as_buffer,write_path);
+                    buffer = await this.#writeMessage(text,get_as_buffer,write_path,retain);
                     resolve();
                 });
             });
@@ -272,6 +299,18 @@ class TextOnGif extends Events{
             return new Promise((resolve,reject)=>{
                 this.on("extracted frame info",()=>{
                     resolve(this.#height);
+                });
+            });
+        }
+    }
+
+    get noOfFrames(){
+        if(this.#noOfFrames){
+            return Promise.resolve(this.#noOfFrames);
+        }else{
+            return new Promise((resolve,reject)=>{
+                this.on("extracted frame info",()=>{
+                    resolve(this.#noOfFrames);
                 });
             });
         }

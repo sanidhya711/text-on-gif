@@ -128,8 +128,16 @@ To use a font file that is not installed as a system font, use registerFont(). T
 # EVENTS:
 * ***"extraction complete"***
 #### Fired once when frame extraction is complete
+&nbsp;
+
+* ***"on frame"***
+#### Fired everytime before writing text on a frame (passes the frame index: 1 indexed)
+&nbsp;
+
 * ***"progress"***
 #### Fired with percentage of gif successfully encoded
+&nbsp;
+
 * ***"finished"***
 #### Fired when gif has successfully been encoded
 
@@ -149,8 +157,19 @@ To use a font file that is not installed as a system font, use registerFont(). T
         });
     });
 
+    //produces alternating white and black colored text on each frame
+    gif.on("on frame",(frameIndex)=>{
+        //be careful you dont change any breaking properties such as font size as the text might overflow if this is done while the text is being written on a gif
+      if(frameIndex % 2 == 0){
+        gif.font_color = "white";
+      }else{
+        gif.font_color = "black";
+      }
+    });
+
+    //encoding the frames back into a gif
     gif.on("progress",(percentage)=>{
-        console.log(percentage+"% done :)");
+        console.log(percentage+"% encoding done :)");
     });
 
     gif.on("finished",()=>{
@@ -306,9 +325,11 @@ whether the gif should have a transparent background or not
 &nbsp;
 
 
-# Gif Height And Width
-*Gif's width and height are unalterable*  
-You can access the gif's width and height using "await gif.width" and "await gif.height;" respectively where gif is a *TextOnGif object*.
+# Number of frames in Gif, Gif Height And Gif Width
+*these properties are unalterable*  
+You can access the gif's width and height using "await gif.width" and "await gif.height" respectively where gif is a *TextOnGif object*.
+
+number of frames in the gif can be accessed by using "await gif.noOfFrames" .
 &nbsp;
 # 
 > # Reason for Using Class Structure:
