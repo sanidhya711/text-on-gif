@@ -113,6 +113,7 @@ Parameter Name                  | Type    | Default Value
 [text](#text)                   | String  | ""
 [get_as_buffer](#get_as_buffer) | Boolean | true
 [write_path](#write_path)       | String  | null
+[retain](#retain)               | Boolean | false
 
 &nbsp;
 
