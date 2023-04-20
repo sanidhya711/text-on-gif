@@ -219,6 +219,14 @@ Path of the file where the gif is to be written.
 
 **Gif will only be written to file if value of write_path is passed**
 
+&nbsp;
+
+# retain
+
+if set to true, when you call the textOnGif function to write on the gif, the text will be retained on the source and all consecutive textOnGif function calls will return the gif with the cumulative text.
+
+*useful when you have to write text on multiple places on the same gif*
+
 
 &nbsp;
 

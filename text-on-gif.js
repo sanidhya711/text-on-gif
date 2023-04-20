@@ -1,5 +1,5 @@
 // Sanidhya077 (sanidhyajain077@gmail.com)
-// last updated[15/2/2023][06:20 UTC]
+// last updated[20/4/2023][14:00 UTC]
 
 'use strict';
 
@@ -171,7 +171,7 @@ class TextOnGif extends Events{
                     var y = this.offset_y;
                 }else if(this.alignment_y == "middle"){
                     ctx.textBaseline = "middle";
-                    var y = this.height/2;
+                    var y = this.#height/2;
                 }else{
                     ctx.textBaseline = "bottom";
                     var y = this.#height - this.offset_y;
@@ -182,7 +182,7 @@ class TextOnGif extends Events{
                     var y = this.offset_y;
                 }else if(this.alignment_y == "middle"){
                     ctx.textBaseline = "top";
-                    var y = (this.height - ((rows.length * approximateLineHeight) + ((rows.length -1) * this.row_gap))) / 2;
+                    var y = (this.#height - ((rows.length * approximateLineHeight) + ((rows.length -1) * this.row_gap))) / 2;
                 }else{
                     ctx.textBaseline = "bottom";
                     var y = this.#height - (((rows.length - 1) * (approximateLineHeight + this.row_gap)) + this.offset_y);
