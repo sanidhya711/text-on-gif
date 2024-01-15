@@ -11,13 +11,52 @@ const fs = require('fs');
 
 class TextOnGif extends Events{
 
+    /**
+     * @type {string}
+     */
     #file_path;
+
+    /**
+     * @type {boolean}
+     */
     #transparent;
+
+    /**
+     * @type {number}
+     */
     #width;
+
+    /**
+     * @type {number}
+     */
     #height;
+
+    /**
+     * @type {number}
+     */
     #noOfFrames;
+
+    /**
+     * @type {boolean}
+     */  
     #retained;
 
+    /**
+     * @param {object} args
+     * @param {string} args.file_path
+     * @param {`${number}${string}`} args.font_size
+     * @param {string} args.font_style
+     * @param {string} args.font_color
+     * @param {string} args.stroke_color
+     * @param {string} args.stroke_width
+     * @param {number} args.alignment_x
+     * @param {number} args.alignment_y
+     * @param {number} args.offset_x
+     * @param {number} args.offset_y
+     * @param {number} args.row_gap
+     * @param {number} args.repeat
+     * @param {boolean} args.transparent
+     */
     constructor(
         {
             file_path,
@@ -38,29 +77,100 @@ class TextOnGif extends Events{
         }
     ){
         super();
+
+        /**
+         * @type {string}
+         */
         this.font_style = font_style ?? "arial";
+
+        /**
+         * @type {string}
+         */
         this.font_color = font_color ?? "black";
+
+        /**
+         * @type {string}
+         */
         this.stroke_color = stroke_color ?? "transparent";
+
+        /**
+         * @type {`${number}${string}`}
+         */
         this.font_size = font_size ?? "32px";
+
+        /**
+         * @type {string | number}
+         */
         this.stroke_width = stroke_width ?? 1;
+
+        /**
+         * @type {string}
+         */
         this.alignment_x = alignment_x ?? "center";
+
+        /**
+         * @type {string}
+         */
         this.alignment_y = alignment_y ?? "bottom";
-        this.offset_x = offset_x ?? 10;
-        this.offset_y = offset_y ?? 10;
+
+        /**
+         * @type {number}
+         */
         this.position_x = position_x;
+
+        /**
+         * @type {number}
+         */
         this.position_y = position_y;
+
+        /**
+         * @type {number}
+         */
+        this.offset_x = offset_x ?? 10;
+
+        /**
+         * @type {number}
+         */
+        this.offset_y = offset_y ?? 10;
+
+        /**
+         * @type {number}
+         */
         this.row_gap = row_gap ?? 5;
+
+        /**
+         * @type {number}
+         */
         this.repeat = repeat ?? 0;
 
-        this.#file_path = file_path;
+        /**
+         * @type {boolean}
+         */
         this.#transparent = transparent ?? false;
 
+        /**
+         * @type {string}
+         * @private
+         */
+        this.#file_path = file_path;
+
+        /**
+         * @type {Array}
+         */
         this.extractedFrames = [];
+
+        /**
+         * @type {boolean}
+         */
         this.extractionComplete = false;
 
         this.#extractFrames();
     }
     
+    /**
+     * Extracts each image frame from a GIF
+     * @returns {void}
+     */
     async #extractFrames(){
         const frameData = await gifFrames({url: this.#file_path,frames: 'all',outputType: 'png', cumulative: false});
 
@@ -71,7 +181,7 @@ class TextOnGif extends Events{
 
         for (let index = 0; index < frameData.length; index++) {
 
-            await new Promise(async (resolve,reject)=>{
+            await new Promise(async (resolve)=>{
 
                 const image = new Canvas.Image();
 
@@ -100,6 +210,13 @@ class TextOnGif extends Events{
         this.emit('extraction complete');
     }
 
+    /**
+     * @param {string} text 
+     * @param {boolean} get_as_buffer 
+     * @param {string} write_path 
+     * @param {boolean} retain 
+     * @returns 
+     */
     async #writeMessage(text,get_as_buffer,write_path,retain){
         if(write_path || get_as_buffer){
             var encoder = new GIFEncoder(this.#width,this.#height,'neuquant',false,this.extractedFrames.length);
@@ -255,6 +372,14 @@ class TextOnGif extends Events{
         }
     }
 
+    /**
+     * @param {object} options
+     * @param {string} options.text The text to write on the gif 
+     * @param {boolean} options.get_as_buffer
+     * @param {string} options.write_path
+     * @param {boolean} options.retain
+     * @returns {Buffer}
+     */
     async textOnGif({text,get_as_buffer,write_path,retain}){
         get_as_buffer = get_as_buffer ?? true;
         retain = retain ?? false;
@@ -276,15 +401,23 @@ class TextOnGif extends Events{
         }
     }
 
+    /**
+     * @param {object} options
+     * @param {string} options.path
+     * @param {string} options.family
+     */
     static registerFont({path,family}){
-        Canvas.registerFont(path,{family: family})
+        Canvas.registerFont(path,{family: family});
     }
 
+    /**
+     * @type {number}
+     */
     get width(){
         if(this.#width){
             return Promise.resolve(this.#width);
         }else{
-            return new Promise((resolve,reject)=>{
+            return new Promise((resolve)=>{
                 this.on("extracted frame info",()=>{
                     resolve(this.#width);
                 });
@@ -292,6 +425,9 @@ class TextOnGif extends Events{
         }
     }
 
+    /**
+     * @type {number}
+     */
     get height(){
         if(this.#height){
             return Promise.resolve(this.#height);
@@ -304,6 +440,9 @@ class TextOnGif extends Events{
         }
     }
 
+    /**
+     * @type {number}
+     */
     get noOfFrames(){
         if(this.#noOfFrames){
             return Promise.resolve(this.#noOfFrames);
@@ -316,6 +455,9 @@ class TextOnGif extends Events{
         }
     }
 
+    /**
+     * @type {string}
+     */
     get file_path(){
         return this.#file_path;
     }

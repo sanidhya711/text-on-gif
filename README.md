@@ -1,8 +1,7 @@
 *text-on-gif is a simple package for writing text on animated as well as non-animated gifs*
 
 > **NOTES**
->* SUPPORTS TRANSPARENT GIFS TOO NOW
->* ADDED OPTION TO REGESTER FONTS
+>* Added JSDOC typings.
 
 ## **Basic Usage**
 ```js
