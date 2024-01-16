@@ -1,2 +1,4 @@
 node_modules/
 .all-contributorsrc
+test.js
+/bin

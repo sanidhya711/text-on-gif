@@ -3,10 +3,6 @@
   "version": "2.0.13",
   "description": "a simple package for writing text on animated as well as non-animated gifs",
   "homepage": "https://github.com/sanidhya711/text-on-gif",
-  "main": "text-on-gif.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "keywords": [
     "text-on-gif",
     "write-on-gif",
@@ -18,11 +14,27 @@
     "add text to gif",
     "print text on gif"
   ],
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "typings"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "node test.js",
+    "echo": "ts-node index.ts"
+  },
   "author": "sanidhya077",
   "license": "ISC",
   "dependencies": {
     "canvas": "^2.11.2",
     "gif-encoder-2": "^1.0.5",
     "gif-frames": "^1.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.4",
+    "nodemon": "^3.0.2",
+    "typescript": "^5.3.3"
   }
 }
