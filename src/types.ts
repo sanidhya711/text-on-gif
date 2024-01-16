@@ -27,3 +27,12 @@ export interface FontOptions {
     path: string;
     family: string;
 }
+
+export interface ExtractedFrame {
+
+    // Conflicting types when applying Image or ImageData
+    imageData: any;
+
+    delay: number;
+    disposal: number;
+}

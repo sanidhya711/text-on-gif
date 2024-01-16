@@ -10,14 +10,21 @@ import * as Events from 'events';
 import { Image, createCanvas, registerFont } from 'canvas';
 import { createWriteStream, unlink, writeFile } from 'fs';
 
-import type { FontOptions, GifOptions, WriteOptions } from '../src/types';
+import type { ExtractedFrame, FontOptions, GifOptions, WriteOptions } from '../src/types';
 
-export default class TextOnGif extends Events {
+declare interface TextOnGif {
+    on(event: "frameDataExtreacted", listener: () => void): this;
+    on(event: "extractionComplete", listener: () => void): this;
+    on(event: "progress", listener: (percent:number) => void): this;
+    on(event: "frameIndexUpdate", listener: () => void): this;
+    on(event: "finished", listener: () => void): this;
+}
 
+class TextOnGif extends Events implements TextOnGif {
     private filePath: string;
     private numberOfFrames: number = 0;
     private retained: boolean = false;
-    private extractedFrames: any[] = [];
+    private extractedFrames: ExtractedFrame[] = [];
     private extractionComplete:boolean = false;
     
     public fontStyle: string;
@@ -73,7 +80,7 @@ export default class TextOnGif extends Events {
         this.width = frameData[0].frameInfo.width;
         this.height = frameData[0].frameInfo.height;
         this.numberOfFrames = frameData.length;
-        this.emit('extracted frame info');
+        this.emit("frameDataExtreacted");
 
         for (let index = 0; index < frameData.length; index++) {
 
@@ -103,12 +110,13 @@ export default class TextOnGif extends Events {
         }
         
         this.extractionComplete = true;
-        this.emit('extraction complete');
+        this.emit('extractionComplete');
     }
 
     async #writeMessage(options:WriteOptions){
+        let encoder: typeof GIFEncoder | null = null;
         if(options.writePath || options.getAsBuffer){
-            var encoder = new GIFEncoder(this.width,this.height,'neuquant',false,this.extractedFrames.length);
+            encoder = new GIFEncoder(this.width,this.height,'neuquant',false,this.extractedFrames.length);
             if(this.transparent){
                 encoder.setTransparent(true);
             }
@@ -128,7 +136,7 @@ export default class TextOnGif extends Events {
             encoder.createReadStream().pipe(writeStream);
         }
 
-        if(encoder){
+        if (encoder !== null){
             encoder.start();
 
             encoder.on('progress', (percent:number) => {
@@ -141,63 +149,65 @@ export default class TextOnGif extends Events {
         const approximateLineHeight = ctx.measureText("M").width;
         const spaceWidth = ctx.measureText("M M").width - (ctx.measureText("M").width * 2);
 
-        var rows = [{text: words[0] + " ",width: ctx.measureText(words[0]).width + spaceWidth}];
+        const rows = [{text: words[0] + " ",width: ctx.measureText(words[0]).width + spaceWidth}];
 
-        for(var i = 1; i < words.length; i++){
-            var moveToNextRow = rows[rows.length - 1].width + ctx.measureText(words[i]).width + spaceWidth <= this.width ? 0 : 1;
+        for(let i = 1; i < words.length; i++){
+            const moveToNextRow = rows[rows.length - 1].width + ctx.measureText(words[i]).width + spaceWidth <= this.width ? 0 : 1;
             rows[rows.length - 1 + moveToNextRow] = {
                 text: (rows[rows.length - 1 + moveToNextRow] != null ? rows[rows.length - 1 + moveToNextRow].text : "") + words[i] + " ",
                 width: (rows[rows.length - 1 + moveToNextRow] != null ? rows[rows.length - 1 + moveToNextRow].width : 0) + ctx.measureText(words[i]).width + spaceWidth
             };
         }
 
+        let x, y: number;
+
         if(this.positionX != null){
             ctx.textAlign = "start";
-            var x = this.positionX;
+            x = this.positionX;
         }else{
             if(this.alignmentX == "right"){
                 ctx.textAlign = "right";
-                var x = this.width - this.offsetX;
+                x = this.width - this.offsetX;
             }else if(this.alignmentX == "left"){
                 ctx.textAlign = "left";
-                var x = this.offsetX;
+                x = this.offsetX;
             }else{
                 ctx.textAlign = "center";
-                var x = this.width / 2;
+                x = this.width / 2;
             }
         }
 
         if(this.positionY != null){
             ctx.textBaseline = "top";
-            var y = this.positionY;
+            y = this.positionY;
         }else{
             if(rows.length == 1){
                 if(this.alignmentY == "top"){
                     ctx.textBaseline = "hanging";
-                    var y = this.offsetY;
+                    y = this.offsetY;
                 }else if(this.alignmentY == "middle"){
                     ctx.textBaseline = "middle";
-                    var y = this.height/2;
+                    y = this.height/2;
                 }else{
                     ctx.textBaseline = "bottom";
-                    var y = this.height - this.offsetY;
+                    y = this.height - this.offsetY;
                 }
             }else{
                 if(this.alignmentY == "top"){
                     ctx.textBaseline = "hanging";
-                    var y = this.offsetY;
+                    y = this.offsetY;
                 }else if(this.alignmentY == "middle"){
                     ctx.textBaseline = "top";
-                    var y = (this.height - ((rows.length * approximateLineHeight) + ((rows.length -1) * this.rowGap))) / 2;
+                    y = (this.height - ((rows.length * approximateLineHeight) + ((rows.length -1) * this.rowGap))) / 2;
                 }else{
                     ctx.textBaseline = "bottom";
-                    var y = this.height - (((rows.length - 1) * (approximateLineHeight + this.rowGap)) + this.offsetY);
+                    y = this.height - (((rows.length - 1) * (approximateLineHeight + this.rowGap)) + this.offsetY);
                 }
             }
         }
         
         for(let index = 0; index < this.extractedFrames.length; index++){
-            this.emit("on frame", index + 1);
+            this.emit("frameIndexUpdate", index + 1);
 
             if(!this.retained) 
                 ctx.drawImage(this.extractedFrames[index].imageData, 0, 0);
@@ -218,7 +228,7 @@ export default class TextOnGif extends Events {
                 ctx.strokeText(options.text,x,y);
                 ctx.fillText(options.text,x,y);
             }else{
-                for(var rowIndex = 0; rowIndex < rows.length; rowIndex++){
+                for(let rowIndex = 0; rowIndex < rows.length; rowIndex++){
                     ctx.strokeText(rows[rowIndex].text.slice(0, -1), x,(rowIndex * (approximateLineHeight + this.rowGap)) + y);
                     ctx.fillText(rows[rowIndex].text.slice(0,-1), x,(rowIndex * (approximateLineHeight + this.rowGap)) + y);
                 }
@@ -271,7 +281,7 @@ export default class TextOnGif extends Events {
             buffer = await this.#writeMessage(options);
         }else{
             await new Promise((resolve,reject)=>{
-                this.on('extraction complete',async()=>{
+                this.on('extractionComplete',async()=>{
                     buffer = await this.#writeMessage(options);
                     resolve(0);
                 });
@@ -291,7 +301,7 @@ export default class TextOnGif extends Events {
         if(this.width) return Promise.resolve(this.width);
 
         return new Promise(resolve => {
-            this.on("extracted frame info",()=>{
+            this.on('frameDataExtreacted',()=>{
                 resolve(this.width);
             });
         });
@@ -301,7 +311,7 @@ export default class TextOnGif extends Events {
         if (this.height) return this.height;
 
         return new Promise(resolve=>{
-            this.on("extracted frame info",()=>{
+            this.on('frameDataExtreacted',()=>{
                 resolve(this.height);
             });
         });
@@ -311,11 +321,13 @@ export default class TextOnGif extends Events {
         if(this.numberOfFrames){
             return Promise.resolve(this.numberOfFrames);
         }else{
-            return new Promise((resolve,reject)=>{
-                this.on("extracted frame info",()=>{
+            return new Promise(resolve=>{
+                this.on('frameDataExtreacted',()=>{
                     resolve(this.numberOfFrames);
                 });
             });
         }
     }
 }
+
+export default TextOnGif;
