@@ -7,10 +7,12 @@ import * as gifFrames from 'gif-frames';
 import * as GIFEncoder from 'gif-encoder-2';
 
 import * as Events from 'events';
-import { Image, createCanvas, registerFont } from 'canvas';
-import { createWriteStream, unlink, writeFile } from 'fs';
+import { Image, ImageData, createCanvas, registerFont } from 'canvas';
+import { createWriteStream } from 'fs';
+import { writeFile, unlink } from 'fs/promises'
 
-import type { ExtractedFrame, FontOptions, GifOptions, WriteOptions } from '../src/types';
+import type { ExtractedFrame, FontOptions, GifOptions, TextOptions } from '../src/types';
+import type { Stream } from 'stream';
 
 declare interface TextOnGif {
     on(event: "frameDataExtreacted", listener: () => void): this;
@@ -25,272 +27,242 @@ class TextOnGif extends Events implements TextOnGif {
     private numberOfFrames: number = 0;
     private retained: boolean = false;
     private extractedFrames: ExtractedFrame[] = [];
-    private extractionComplete:boolean = false;
     
-    public fontStyle: string;
-    public fontColor: string;
-    public strokeColor: string;
-    public fontSize: string;
-    public strokeWidth: number;
-    public alignmentX: string;
-    public alignmentY: string;
-    public offsetX: number;
-    public offsetY: number;
-    public positionX: number;
-    public positionY: number;
-    public rowGap: number;
-    public repeat: number;
     public width: number = 0;
     public height: number = 0;
+    public text: string = 'Hello World!';
+    public gifOptions: GifOptions = {
+        retain: true
+    }
 
-    public transparent: boolean;
+    public textOptions: TextOptions = {
+        fontFamily: "arial",
+        fontColor: "black",
+        strokeColor: "transparent",
+        fontSize: "32px",
+        strokeWidth: 1,
+        alignmentX: "center",
+        alignmentY: "bottom",
+        offsetX: 10,
+        offsetY: 10,
+        positionX: 0,
+        positionY: 0,
+        rowGap: 5,
+        repeat: 0,
+        transparent: false
+    }
 
-    constructor(options:GifOptions){
+    public transparent: boolean = false;
+    private buffer: Buffer | null = null;
+
+    constructor(path:string){
         super();
 
-        this.filePath = options.filePath;
-        this.transparent = options.transparent;
-
-        this.fontStyle = options.fontStyle ?? "arial";
-        this.fontColor = options.fontColor ?? "black";
-        this.strokeColor = options.strokeColor ?? "transparent";
-        this.fontSize = options.fontSize ?? "32px";
-        this.strokeWidth = options.strokeWidth ?? 1;
-        this.alignmentX = options.alignmentX ?? "center";
-        this.alignmentY = options.alignmentY ?? "bottom";
-        this.offsetX = options.offsetX ?? 10;
-        this.offsetY = options.offsetY ?? 10;
-        this.positionX = options.positionX;
-        this.positionY = options.positionY;
-        this.rowGap = options.rowGap ?? 5;
-        this.repeat = options.repeat ?? 0;
-
-        this.filePath = options.filePath;
-        this.transparent = options.transparent ?? false;
-
+        this.filePath = path;
         this.extractedFrames = [];
-        this.extractionComplete = false;
+    }
 
-        this.#extractFrames();
+    async writeStreamToFile(data:Stream, outputPath:string) {
+        await new Promise((res) =>
+            data
+                .pipe(
+                    createWriteStream(
+                        outputPath
+                    )
+                )
+                .on("close", res)
+        );
+
+      return true;
     }
     
     async #extractFrames(): Promise<void> {
-        const frameData = await gifFrames({url: this.filePath ,frames: 'all',outputType: 'png', cumulative: false});
+        const frameData = await gifFrames({ url: this.filePath, frames: 'all', outputType: 'png', cumulative: false });
 
         this.width = frameData[0].frameInfo.width;
         this.height = frameData[0].frameInfo.height;
         this.numberOfFrames = frameData.length;
         this.emit("frameDataExtreacted");
 
-        for (let index = 0; index < frameData.length; index++) {
+        let i = 0;
+        for await (const frame of frameData) {
+            const imgPath = `frame-${i}.png`;
 
-            await new Promise(async (resolve)=>{
+            try {
+                await this.writeStreamToFile(frame.getImage(), imgPath);
 
-                const image = new Image();
+                const img = new Image();
+                img.src = imgPath;
 
-                image.onload = () => {
-                    this.extractedFrames.push({
-                        imageData: image,
-                        delay: frameData[index].frameInfo.delay * 10,
-                        disposal: frameData[index].frameInfo.disposal
-                    });
-
-                    unlink('frame-'+index+'.png',()=>{});
-                    resolve(0);
-                }
-
-                const writeStream = frameData[index].getImage().pipe(createWriteStream('frame-'+index+'.png'));
-                
-                writeStream.on('finish',()=>{
-                    image.src = 'frame-'+index+'.png';
+                this.extractedFrames.push({
+                    imageData: img,
+                    delay: frame.frameInfo.delay * 10,
+                    disposal: frame.frameInfo.disposal
                 });
-                
-            });
-    
+
+                unlink(imgPath).catch(() => null);
+            } catch (err) {
+                console.error(err);
+            }
+            
+            ++i;
         }
         
-        this.extractionComplete = true;
         this.emit('extractionComplete');
     }
 
-    async #writeMessage(options:WriteOptions){
-        let encoder: typeof GIFEncoder | null = null;
-        if(options.writePath || options.getAsBuffer){
-            encoder = new GIFEncoder(this.width,this.height,'neuquant',false,this.extractedFrames.length);
-            if(this.transparent){
-                encoder.setTransparent(true);
-            }
-            encoder.setRepeat(this.repeat);
-        }
+    async setText(text:string, options?:TextOptions) {
+        if (options) this.textOptions = Object.assign(this.textOptions, options);
 
-        const canvas = createCanvas(this.width, this.height);
+        this.text = text;
+        await this.#extractFrames();
+ 
+        return this;
+    }
+
+    async writeFile(filePath:string) {
+        await this.#renderGIF(this.text, this.gifOptions);
+
+        if (this.buffer) {
+            await writeFile(filePath, this.buffer);
+            return true;
+        } else {
+            throw new Error('Result GIF buffer returned empty')
+        }
+        
+    }
+
+    async toBuffer() {
+        await this.#renderGIF(this.text, this.gifOptions);
+
+        return this.buffer;
+    }
+
+    async #renderGIF(text:string, options?:GifOptions) {
+        var encoder = new GIFEncoder(this.width, this.height, 'neuquant', false, this.extractedFrames.length);
+        if(this.transparent){
+            encoder.setTransparent(true);
+        }
+        encoder.setRepeat(this.textOptions.repeat);
+
+        const canvas = createCanvas(this.width,this.height);
         const ctx = canvas.getContext('2d');
 
-        ctx.font = this.fontSize + ' ' + this.fontStyle;
+        ctx.font = this.textOptions.fontSize + ' ' + this.textOptions.fontFamily;
 
-        if(options.writePath && !options.getAsBuffer){
-            const writeStream = createWriteStream(options.writePath);
-            writeStream.on('error',(error)=>{
-                return Promise.reject(error);
-            });
-            encoder.createReadStream().pipe(writeStream);
-        }
+        encoder.start();
 
-        if (encoder !== null){
-            encoder.start();
+        encoder.on('progress', (percent:number) => {
+            this.emit("progress", percent);
+        });
 
-            encoder.on('progress', (percent:number) => {
-                this.emit("progress", percent);
-            });
-        }
-
-        const words = options.text.split(' ');
+        const words = text.split(' ');
 
         const approximateLineHeight = ctx.measureText("M").width;
         const spaceWidth = ctx.measureText("M M").width - (ctx.measureText("M").width * 2);
 
-        const rows = [{text: words[0] + " ",width: ctx.measureText(words[0]).width + spaceWidth}];
+        var rows = [{text: words[0] + " ",width: ctx.measureText(words[0]).width + spaceWidth}];
 
-        for(let i = 1; i < words.length; i++){
-            const moveToNextRow = rows[rows.length - 1].width + ctx.measureText(words[i]).width + spaceWidth <= this.width ? 0 : 1;
+        for(var i = 1; i < words.length; i++){
+            var moveToNextRow = rows[rows.length - 1].width + ctx.measureText(words[i]).width + spaceWidth <= this.width ? 0 : 1;
             rows[rows.length - 1 + moveToNextRow] = {
                 text: (rows[rows.length - 1 + moveToNextRow] != null ? rows[rows.length - 1 + moveToNextRow].text : "") + words[i] + " ",
                 width: (rows[rows.length - 1 + moveToNextRow] != null ? rows[rows.length - 1 + moveToNextRow].width : 0) + ctx.measureText(words[i]).width + spaceWidth
             };
         }
 
-        let x, y: number;
-
-        if(this.positionX != null){
+        if(this.textOptions.positionX != null){
             ctx.textAlign = "start";
-            x = this.positionX;
+            var x = this.textOptions.positionX;
         }else{
-            if(this.alignmentX == "right"){
+            if(this.textOptions.alignmentX == "right"){
                 ctx.textAlign = "right";
-                x = this.width - this.offsetX;
-            }else if(this.alignmentX == "left"){
+                var x = this.width - this.textOptions.offsetX;
+            }else if(this.textOptions.alignmentX == "left"){
                 ctx.textAlign = "left";
-                x = this.offsetX;
+                var x = this.textOptions.offsetX;
             }else{
                 ctx.textAlign = "center";
-                x = this.width / 2;
+                var x = this.width / 2;
             }
         }
 
-        if(this.positionY != null){
+        if(this.textOptions.positionY != null){
             ctx.textBaseline = "top";
-            y = this.positionY;
+            var y = this.textOptions.positionY;
         }else{
             if(rows.length == 1){
-                if(this.alignmentY == "top"){
+                if(this.textOptions.alignmentY == "top"){
                     ctx.textBaseline = "hanging";
-                    y = this.offsetY;
-                }else if(this.alignmentY == "middle"){
+                    var y = this.textOptions.offsetY;
+                }else if(this.textOptions.alignmentY == "middle"){
                     ctx.textBaseline = "middle";
-                    y = this.height/2;
+                    var y = this.height/2;
                 }else{
                     ctx.textBaseline = "bottom";
-                    y = this.height - this.offsetY;
+                    var y = this.height - this.textOptions.offsetY;
                 }
             }else{
-                if(this.alignmentY == "top"){
+                if(this.textOptions.alignmentY == "top"){
                     ctx.textBaseline = "hanging";
-                    y = this.offsetY;
-                }else if(this.alignmentY == "middle"){
+                    var y = this.textOptions.offsetY;
+                }else if(this.textOptions.alignmentY == "middle"){
                     ctx.textBaseline = "top";
-                    y = (this.height - ((rows.length * approximateLineHeight) + ((rows.length -1) * this.rowGap))) / 2;
+                    var y = (this.height - ((rows.length * approximateLineHeight) + ((rows.length -1) * this.textOptions.rowGap))) / 2;
                 }else{
                     ctx.textBaseline = "bottom";
-                    y = this.height - (((rows.length - 1) * (approximateLineHeight + this.rowGap)) + this.offsetY);
+                    var y = this.height - (((rows.length - 1) * (approximateLineHeight + this.textOptions.rowGap)) + this.textOptions.offsetY);
                 }
             }
         }
         
         for(let index = 0; index < this.extractedFrames.length; index++){
-            this.emit("frameIndexUpdate", index + 1);
+            this.emit("frameIndexUpdate", index);
 
-            if(!this.retained) 
-                ctx.drawImage(this.extractedFrames[index].imageData, 0, 0);
-            else 
-                ctx.putImageData(this.extractedFrames[index].imageData, 0, 0);
+            try {
+                if(!this.retained) 
+                    ctx.drawImage(this.extractedFrames[index].imageData, 0, 0);
+                else 
+                    ctx.putImageData(this.extractedFrames[index].imageData, 0, 0);
+            } catch (err) {}
         
-            ctx.strokeStyle = this.strokeColor;
-            ctx.lineWidth = this.strokeWidth;
-            ctx.font = this.fontSize + ' ' + this.fontStyle;
-            ctx.fillStyle = this.fontColor;
+            ctx.strokeStyle = this.textOptions.strokeColor;
+            ctx.lineWidth = this.textOptions.strokeWidth;
+            ctx.font = this.textOptions.fontSize + ' ' + this.textOptions.fontFamily;
+            ctx.fillStyle = this.textOptions.fontColor;
 
-            let withoutText: object;
+            let withoutText: ImageData;
             if(this.extractedFrames[index].disposal != 2){
                 withoutText = ctx.getImageData(0,0,this.width,this.height);
             }
         
             if(rows.length == 1){
-                ctx.strokeText(options.text,x,y);
-                ctx.fillText(options.text,x,y);
+                ctx.strokeText(text,x,y);
+                ctx.fillText(text,x,y);
             }else{
-                for(let rowIndex = 0; rowIndex < rows.length; rowIndex++){
-                    ctx.strokeText(rows[rowIndex].text.slice(0, -1), x,(rowIndex * (approximateLineHeight + this.rowGap)) + y);
-                    ctx.fillText(rows[rowIndex].text.slice(0,-1), x,(rowIndex * (approximateLineHeight + this.rowGap)) + y);
+                for(var rowIndex = 0; rowIndex < rows.length; rowIndex++){
+                    ctx.strokeText(rows[rowIndex].text.slice(0, -1), x,(rowIndex * (approximateLineHeight + this.textOptions.rowGap)) + y);
+                    ctx.fillText(rows[rowIndex].text.slice(0,-1), x,(rowIndex * (approximateLineHeight + this.textOptions.rowGap)) + y);
                 }
             }
 
-            if(encoder){
-                encoder.setDelay(this.extractedFrames[index].delay);
-                encoder.setDispose(this.extractedFrames[index].disposal);
-                encoder.addFrame(ctx);
-            }
+            encoder.setDelay(this.extractedFrames[index].delay);
+            encoder.setDispose(this.extractedFrames[index].disposal);
+            encoder.addFrame(ctx);
 
-            if(options.retain) this.extractedFrames[index].imageData = ctx.getImageData(0,0,this.width,this.height);
+            if(options?.retain) this.extractedFrames[index].imageData = ctx.getImageData(0,0,this.width,this.height);
 
             if(this.extractedFrames[index].disposal == 2){
                 ctx.clearRect(0,0,this.width,this.height);
             }else{
-                ctx.putImageData(withoutText! as ImageData,0,0);
+                ctx.putImageData(withoutText!,0,0);
             }
         }
 
-        this.retained = this.retained ? true : options.retain;
-        if(encoder) encoder.finish();
-        this.emit("finished");
-
-        if(options.getAsBuffer && options.writePath){
-            await new Promise((resolve,reject)=>{
-                writeFile(options.writePath, encoder.out.getData(), error => {
-                    if(error){
-                        reject(error);
-                    }else{
-                        resolve(0);
-                    }
-                });
-            })
-        }
+        encoder.finish();
         
-        if(options.getAsBuffer){
-            return Promise.resolve(encoder.out.getData());
-        }else{
-            return null;
-        }
-    }
-
-    async textOnGif(options:WriteOptions){
-        options.getAsBuffer = options.getAsBuffer ?? true;
-        options.retain = options.retain ?? false;
-        let buffer = null;
-
-        if(this.extractionComplete){
-            buffer = await this.#writeMessage(options);
-        }else{
-            await new Promise((resolve,reject)=>{
-                this.on('extractionComplete',async()=>{
-                    buffer = await this.#writeMessage(options);
-                    resolve(0);
-                });
-            });
-        }
-
-        if(buffer){
-            return Promise.resolve(buffer);
-        }
+        this.buffer = await encoder.out.getData();
+        this.emit("finished");
     }
 
     static registerFont(options:FontOptions){

@@ -22,7 +22,7 @@
   ],
   "scripts": {
     "build": "tsc",
-    "test": "node test.js",
+    "test": "npm run build && node test.js",
     "echo": "ts-node index.ts"
   },
   "author": "sanidhya077",

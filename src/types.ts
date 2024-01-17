@@ -1,7 +1,6 @@
-export interface GifOptions {
-    filePath: string;
+export interface TextOptions {
     fontSize: string;
-    fontStyle: string;
+    fontFamily: string;
     fontColor: string;
     strokeColor: string;
     strokeWidth: number; 
@@ -16,10 +15,7 @@ export interface GifOptions {
     transparent: boolean;
 }
 
-export interface WriteOptions {
-    text: string;
-    getAsBuffer: boolean;
-    writePath: string;
+export interface GifOptions {
     retain: boolean;
 }
 
