@@ -1,14 +1,4 @@
-import TextOnGif from "./src/textOnGif";
+export * from './src/types';
+export * from './src/textOnGif'; // UNTESTED
 
-export {
-    TextOnGif
-}
-
-(async() => {
-    const gif = await new TextOnGif('https://media0.giphy.com/media/Ju7l5y9osyymQ/giphy.gif')
-        .setText('Hello World!')
-
-    const buffer = await gif.toBuffer() // Get buffer
-
-    await gif.writeFile('test.gif')     //  OR Create File
-})();
+// TODO: Handle buffers as filePath input, re-add typings, redo README

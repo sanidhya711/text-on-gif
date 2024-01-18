@@ -6,8 +6,8 @@ export interface TextOptions {
     strokeWidth: number; 
     alignmentX: string;
     alignmentY: string
-    positionX: number;
-    positionY: number;
+    positionX: number | null;
+    positionY: number | null;
     offsetX: number;
     offsetY: number;
     rowGap: number;
