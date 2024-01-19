@@ -9,13 +9,10 @@ import * as GIFEncoder from 'gif-encoder-2';
 import * as Events from 'events';
 import { Image, ImageData, createCanvas, registerFont } from 'canvas';
 import { createWriteStream } from 'fs';
-import { writeFile, unlink } from 'fs/promises'
+import { unlink } from 'fs/promises'
 
-import type { ExtractedFrame, FontOptions, GifOptions, TextOptions } from '../src/types';
+import type { ExtractedFrame, FontOptions, TextOptions } from '../src/types';
 import { Readable, type Stream } from 'stream';
-import { promisify } from 'util';
-
-const wait = promisify(setTimeout);
 
 declare interface TextOnGif {
     on(event: "frameDataExtreacted", listener: () => void): this;
@@ -34,9 +31,6 @@ class TextOnGif extends Events implements TextOnGif {
     public width: number = 0;
     public height: number = 0;
     public text: string = 'Hello World!';
-    public gifOptions: GifOptions = {
-        retain: true
-    }
 
     public textOptions: TextOptions = {
         fontFamily: "calibri",
@@ -52,6 +46,7 @@ class TextOnGif extends Events implements TextOnGif {
         positionY: null,
         rowGap: 5,
         repeat: 0,
+        retain: false,
         transparent: false
     }
 
@@ -123,8 +118,8 @@ class TextOnGif extends Events implements TextOnGif {
         return this;
     }
 
-    async writeFile(filePath:string) {
-        await this.#renderGIF(this.text, this.gifOptions);
+    async toFile(filePath:string) {
+        await this.#renderGIF(this.text);
 
         if (this.buffer) {
             await this.writeStreamToFile(Readable.from(this.buffer), filePath);
@@ -135,12 +130,12 @@ class TextOnGif extends Events implements TextOnGif {
     }
 
     async toBuffer() {
-        await this.#renderGIF(this.text, this.gifOptions);
+        await this.#renderGIF(this.text);
 
         return this.buffer;
     }
 
-    async #renderGIF(text:string, options?:GifOptions) {
+    async #renderGIF(text:string) {
         let encoder = new GIFEncoder(this.width, this.height, 'neuquant', false, this.extractedFrames.length);
         if(this.transparent){
             encoder.setTransparent(true);
@@ -254,7 +249,7 @@ class TextOnGif extends Events implements TextOnGif {
             encoder.setDispose(this.extractedFrames[index].disposal);
             encoder.addFrame(ctx);
 
-            if(options?.retain) this.extractedFrames[index].imageData = ctx.getImageData(0,0,this.width,this.height);
+            if(this.textOptions.retain) this.extractedFrames[index].imageData = ctx.getImageData(0,0,this.width,this.height);
 
             if(this.extractedFrames[index].disposal == 2){
                 ctx.clearRect(0,0,this.width,this.height);

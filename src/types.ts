@@ -12,11 +12,8 @@ export interface TextOptions {
     offsetY: number;
     rowGap: number;
     repeat: number;
-    transparent: boolean;
-}
-
-export interface GifOptions {
     retain: boolean;
+    transparent: boolean;
 }
 
 export interface FontOptions {
