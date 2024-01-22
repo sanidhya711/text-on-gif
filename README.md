@@ -15,7 +15,7 @@ const gif = await new TextOnGif(gifURL)
         alignmentX: 'center'
     })
 
-await gif.writeFile('test.gif');     // Save as file
+await gif.toFile('test.gif');     // Save as file
 
 const buffer = await gif.toBuffer(); // Or get buffer data
 ```
@@ -79,7 +79,7 @@ const buffer = await gif.toBuffer();
 ```
 
 # EVENTS:
-* ***""extractionComplete""*** 
+* ***"extractionComplete"*** 
 
     type: `() => void`
 
