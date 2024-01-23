@@ -21,7 +21,7 @@ declare interface TextOnGif {
     on(event: "frameDataExtreacted", listener: () => void): this;
     on(event: "extractionComplete", listener: () => void): this;
     on(event: "progress", listener: (percent: number) => void): this;
-    on(event: "frameIndexUpdate", listener: () => void): this;
+    on(event: "frameIndexUpdate", listener: (index:number) => void): this;
     on(event: "finished", listener: () => void): this;
 }
 
